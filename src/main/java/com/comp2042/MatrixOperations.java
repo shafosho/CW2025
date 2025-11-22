@@ -8,18 +8,21 @@ import java.util.stream.Collectors;
 
 public class MatrixOperations {
 
-
-    //We don't want to instantiate this utility class
-    private MatrixOperations(){
-
+    private MatrixOperations() {
     }
 
     public static boolean intersect(final int[][] matrix, final int[][] brick, int x, int y) {
+        // Loop through the brick's rows (i) and columns (j)
         for (int i = 0; i < brick.length; i++) {
             for (int j = 0; j < brick[i].length; j++) {
-                int targetX = x + i;
-                int targetY = y + j;
-                if (brick[j][i] != 0 && (checkOutOfBound(matrix, targetX, targetY) || matrix[targetY][targetX] != 0)) {
+
+                // Calculate where this part of the brick is on the main board
+                // Fixed: j is x-offset (width), i is y-offset (height)
+                int targetX = x + j;
+                int targetY = y + i;
+
+                // Check if the brick part isn't empty and hits something or goes out of bounds
+                if (brick[i][j] != 0 && (checkOutOfBound(matrix, targetX, targetY) || matrix[targetY][targetX] != 0)) {
                     return true;
                 }
             }
@@ -48,12 +51,17 @@ public class MatrixOperations {
 
     public static int[][] merge(int[][] filledFields, int[][] brick, int x, int y) {
         int[][] copy = copy(filledFields);
+
+        // Loop through rows (i) and columns (j)
         for (int i = 0; i < brick.length; i++) {
             for (int j = 0; j < brick[i].length; j++) {
-                int targetX = x + i;
-                int targetY = y + j;
-                if (brick[j][i] != 0) {
-                    copy[targetY][targetX] = brick[j][i];
+
+                // Fixed: j is x (column), i is y (row)
+                int targetX = x + j;
+                int targetY = y + i;
+
+                if (brick[i][j] != 0) {
+                    copy[targetY][targetX] = brick[i][j];
                 }
             }
         }
@@ -92,8 +100,7 @@ public class MatrixOperations {
         return new ClearRow(clearedRows.size(), tmp, scoreBonus);
     }
 
-    public static List<int[][]> deepCopyList(List<int[][]> list){
+    public static List<int[][]> deepCopyList(List<int[][]> list) {
         return list.stream().map(MatrixOperations::copy).collect(Collectors.toList());
     }
-
 }
