@@ -8,18 +8,21 @@ import java.awt.*;
 
 public class SimpleBoard implements Board {
 
-    private final int width;
-    private final int height;
+    // REFACTOR: Renamed 'width' -> 'rows' and 'height' -> 'cols'
+    // This matches the inputs (25, 10) from GameController
+    private final int rows;
+    private final int cols;
     private final BrickGenerator brickGenerator;
     private final BrickRotator brickRotator;
     private int[][] currentGameMatrix;
     private Point currentOffset;
     private final Score score;
 
-    public SimpleBoard(int width, int height) {
-        this.width = width;
-        this.height = height;
-        currentGameMatrix = new int[width][height];
+    public SimpleBoard(int rows, int cols) {
+        this.rows = rows;
+        this.cols = cols;
+        // REFACTOR: Matrix is now correctly [rows][cols] (Standard Java Convention)
+        currentGameMatrix = new int[rows][cols];
         brickGenerator = new RandomBrickGenerator();
         brickRotator = new BrickRotator();
         score = new Score();
@@ -38,7 +41,6 @@ public class SimpleBoard implements Board {
             return true;
         }
     }
-
 
     @Override
     public boolean moveBrickLeft() {
@@ -85,7 +87,10 @@ public class SimpleBoard implements Board {
     public boolean createNewBrick() {
         Brick currentBrick = brickGenerator.getBrick();
         brickRotator.setBrick(currentBrick);
-        currentOffset = new Point(4, 10);
+
+        // FIX: Spawns at top (y=0) instead of middle (y=10)
+        currentOffset = new Point(4, 0);
+
         return MatrixOperations.intersect(currentGameMatrix, brickRotator.getCurrentShape(), (int) currentOffset.getX(), (int) currentOffset.getY());
     }
 
@@ -109,7 +114,6 @@ public class SimpleBoard implements Board {
         ClearRow clearRow = MatrixOperations.checkRemoving(currentGameMatrix);
         currentGameMatrix = clearRow.getNewMatrix();
         return clearRow;
-
     }
 
     @Override
@@ -117,10 +121,10 @@ public class SimpleBoard implements Board {
         return score;
     }
 
-
     @Override
     public void newGame() {
-        currentGameMatrix = new int[width][height];
+        // REFACTOR: Use the correct variables
+        currentGameMatrix = new int[rows][cols];
         score.reset();
         createNewBrick();
     }
