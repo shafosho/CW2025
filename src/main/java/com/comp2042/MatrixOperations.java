@@ -6,22 +6,30 @@ import java.util.Deque;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Helper class for matrix calculations like checking collisions and merging bricks.
+ */
 public class MatrixOperations {
 
     private MatrixOperations() {
     }
 
+    /**
+     * Checks if the brick hits any filled spots on the board or goes out of bounds.
+     * * @param matrix The main game board
+     * @param brick The falling brick shape
+     * @param x The column position (horizontal)
+     * @param y The row position (vertical)
+     * @return true if there is a collision or it's out of bounds, false otherwise
+     */
     public static boolean intersect(final int[][] matrix, final int[][] brick, int x, int y) {
-        // Loop through the brick's rows (i) and columns (j)
         for (int i = 0; i < brick.length; i++) {
             for (int j = 0; j < brick[i].length; j++) {
 
-                // Calculate where this part of the brick is on the main board
-                // Fixed: j is x-offset (width), i is y-offset (height)
+                // Fixed: j is x (column), i is y (row)
                 int targetX = x + j;
                 int targetY = y + i;
 
-                // Check if the brick part isn't empty and hits something or goes out of bounds
                 if (brick[i][j] != 0 && (checkOutOfBound(matrix, targetX, targetY) || matrix[targetY][targetX] != 0)) {
                     return true;
                 }
@@ -38,6 +46,11 @@ public class MatrixOperations {
         return returnValue;
     }
 
+    /**
+     * Makes a totally new copy of the grid so we don't mess up the old one.
+     * @param original The 2D array we want to copy
+     * @return The new copy of the array
+     */
     public static int[][] copy(int[][] original) {
         int[][] myInt = new int[original.length][];
         for (int i = 0; i < original.length; i++) {
@@ -49,10 +62,16 @@ public class MatrixOperations {
         return myInt;
     }
 
+    /**
+     * Merges the brick into the game board when it lands.
+     * * @param filledFields The current game board
+     * @param brick The brick to add
+     * @param x The column position
+     * @param y The row position
+     * @return A new board matrix with the brick added
+     */
     public static int[][] merge(int[][] filledFields, int[][] brick, int x, int y) {
         int[][] copy = copy(filledFields);
-
-        // Loop through rows (i) and columns (j)
         for (int i = 0; i < brick.length; i++) {
             for (int j = 0; j < brick[i].length; j++) {
 
@@ -68,6 +87,11 @@ public class MatrixOperations {
         return copy;
     }
 
+    /**
+     * Checks for full rows and removes them, shifting everything down.
+     * * @param matrix The game board
+     * @return A ClearRow object containing the new board and score info
+     */
     public static ClearRow checkRemoving(final int[][] matrix) {
         int[][] tmp = new int[matrix.length][matrix[0].length];
         Deque<int[]> newRows = new ArrayDeque<>();

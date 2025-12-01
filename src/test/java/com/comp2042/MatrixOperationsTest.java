@@ -3,6 +3,10 @@ package com.comp2042;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Test to verify the logic in MatrixOperations.
+ * Checks for coordinate mapping errors and boundary collisions.
+ */
 public class MatrixOperationsTest {
 
     // Simple 4x10 board
