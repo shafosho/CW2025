@@ -2,6 +2,10 @@ package com.comp2042.data;
 
 import com.comp2042.gameLogic.MatrixOperations;
 
+/**
+ * Helper class to calculate and store the next rotation state of a brick.
+ * Used to check for collisions before actually rotating the piece.
+ */
 public final class NextShapeInfo {
 
     private final int[][] shape;
