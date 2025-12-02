@@ -1,10 +1,11 @@
 package com.comp2042.gui;
 
-import com.comp2042.*;
 import com.comp2042.data.DownData;
+import com.comp2042.EventSource;
+import com.comp2042.EventType;
 import com.comp2042.data.MoveEvent;
 import com.comp2042.data.ViewData;
-import com.comp2042.gameLogic.InputEventListener;
+import com.comp2042.gameLogic.InputEventListener; // Or .logic if you renamed it
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.beans.property.BooleanProperty;
@@ -15,6 +16,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Group;
+import javafx.scene.control.Label;
 import javafx.scene.effect.Reflection;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -43,6 +45,9 @@ public class GuiController implements Initializable {
 
     @FXML
     private GameOverPanel gameOverPanel;
+
+    @FXML
+    private Label scoreLabel;
 
     private Rectangle[][] displayMatrix;
 
@@ -206,6 +211,7 @@ public class GuiController implements Initializable {
     }
 
     public void bindScore(IntegerProperty integerProperty) {
+        scoreLabel.textProperty().bind(integerProperty.asString("Score: %d"));
     }
 
     public void gameOver() {
