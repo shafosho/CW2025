@@ -11,7 +11,7 @@ import java.net.URL;
 
 /**
  * The main entry point for the Tetris application.
- * Loads the FXML layout and sets up the primary stage.
+ * Loads the FXML layout, and sets up the primary stage.
  */
 public class Main extends Application {
 
