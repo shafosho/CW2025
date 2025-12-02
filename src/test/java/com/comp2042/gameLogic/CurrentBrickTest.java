@@ -6,7 +6,10 @@ import java.util.ArrayList;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class CurrentBrickTest {
+/**
+ * Tests the rotation logic of the CurrentBrick (formerly BrickRotator).
+ */
+class CurrentBrickTest {
 
     @Test
     void testRotationCycle() {
@@ -14,14 +17,19 @@ public class CurrentBrickTest {
         MockBrick mockBrick = new MockBrick();
         currentBrick.setBrick(mockBrick);
 
+        // Initial state should be shape 0
         assertArrayEquals(mockBrick.getShapeMatrix().get(0), currentBrick.getCurrentShape());
 
+        // Rotate once -> Shape 1
         currentBrick.setCurrentShape(1);
         assertArrayEquals(mockBrick.getShapeMatrix().get(1), currentBrick.getCurrentShape());
 
+        // Check next shape logic (should wrap around)
+        // If current is 1, next should be 0 (since size is 2)
         assertEquals(0, currentBrick.getNextShape().getPosition());
     }
 
+    // A simple fake brick for testing purposes
     static class MockBrick implements Brick {
         private final List<int[][]> matrix = new ArrayList<>();
 
