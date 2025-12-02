@@ -8,26 +8,37 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.net.URL;
-import java.util.ResourceBundle;
 
+/**
+ * The main entry point for the Tetris application.
+ * Loads the FXML layout and sets up the primary stage.
+ */
 public class Main extends Application {
+
+    private static final int WINDOW_WIDTH = 300;
+    private static final int WINDOW_HEIGHT = 510;
+    private static final String APP_TITLE = "TetrisJFX";
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-
         URL location = getClass().getClassLoader().getResource("gameLayout.fxml");
-        ResourceBundle resources = null;
-        FXMLLoader fxmlLoader = new FXMLLoader(location, resources);
+
+        // Load the FXML file
+        FXMLLoader fxmlLoader = new FXMLLoader(location);
         Parent root = fxmlLoader.load();
+
+        // Get the controller to pass to the Game Logic
         GuiController c = fxmlLoader.getController();
 
-        primaryStage.setTitle("TetrisJFX");
-        Scene scene = new Scene(root, 300, 510);
+        // Set up the window
+        primaryStage.setTitle(APP_TITLE);
+        Scene scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
         primaryStage.setScene(scene);
         primaryStage.show();
+
+        // Initialize the Game Logic
         new GameController(c);
     }
-
 
     public static void main(String[] args) {
         launch(args);
