@@ -1,8 +1,8 @@
 package com.comp2042.gui;
 
 import com.comp2042.data.DownData;
-import com.comp2042.EventSource;
-import com.comp2042.EventType;
+import com.comp2042.data.EventSource;
+import com.comp2042.data.EventType;
 import com.comp2042.data.MoveEvent;
 import com.comp2042.data.ViewData;
 import com.comp2042.gameLogic.InputEventListener; // Or .logic if you renamed it
