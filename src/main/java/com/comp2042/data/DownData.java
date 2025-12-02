@@ -1,4 +1,6 @@
-package com.comp2042;
+package com.comp2042.data;
+
+import com.comp2042.gameLogic.ClearRow;
 
 public final class DownData {
     private final ClearRow clearRow;

@@ -1,5 +1,10 @@
-package com.comp2042;
+package com.comp2042.gui;
 
+import com.comp2042.*;
+import com.comp2042.data.DownData;
+import com.comp2042.data.MoveEvent;
+import com.comp2042.data.ViewData;
+import com.comp2042.gameLogic.InputEventListener;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.beans.property.BooleanProperty;

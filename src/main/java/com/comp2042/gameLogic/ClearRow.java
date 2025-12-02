@@ -1,4 +1,4 @@
-package com.comp2042;
+package com.comp2042.gameLogic;
 
 public final class ClearRow {
 
