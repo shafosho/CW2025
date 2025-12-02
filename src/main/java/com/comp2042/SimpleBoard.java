@@ -11,6 +11,10 @@ import java.awt.*;
  */
 public class SimpleBoard implements Board {
 
+    // Refactor: Replaced magic number '4' and '0' with named constants for spawning
+    private static final int SPAWN_COL = 4;
+    private static final int SPAWN_ROW = 0;
+
     private final int rows;
     private final int cols;
     private final BrickGenerator brickGenerator;
@@ -78,7 +82,7 @@ public class SimpleBoard implements Board {
         int[][] currentMatrix = MatrixOperations.copy(currentGameMatrix);
         Point p = new Point(currentOffset);
         p.translate(1, 0);
-        boolean conflict = MatrixOperations.intersect(currentMatrix, brickRotator.getCurrentShape(), (int) p.getX(), (int) p.getY());
+        boolean conflict = MatrixOperations.intersect(currentMatrix, brickRotator.getCurrentShape(), (int) p.getX(), (int) currentOffset.getY());
         if (conflict) {
             return false;
         } else {
@@ -112,7 +116,10 @@ public class SimpleBoard implements Board {
     public boolean createNewBrick() {
         Brick currentBrick = brickGenerator.getBrick();
         brickRotator.setBrick(currentBrick);
-        currentOffset = new Point(4, 0);
+
+        // Refactor: Use constants instead of magic numbers
+        currentOffset = new Point(SPAWN_COL, SPAWN_ROW);
+
         return MatrixOperations.intersect(currentGameMatrix, brickRotator.getCurrentShape(), (int) currentOffset.getX(), (int) currentOffset.getY());
     }
 

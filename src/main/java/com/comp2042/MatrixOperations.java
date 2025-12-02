@@ -11,6 +11,9 @@ import java.util.stream.Collectors;
  */
 public class MatrixOperations {
 
+    // Refactor: Replaced magic number '50' with a named constant
+    private static final int SCORE_PER_LINE = 50;
+
     private MatrixOperations() {
     }
 
@@ -120,7 +123,9 @@ public class MatrixOperations {
                 break;
             }
         }
-        int scoreBonus = 50 * clearedRows.size() * clearedRows.size();
+
+        // Refactor: Use constant 'SCORE_PER_LINE' instead of 50
+        int scoreBonus = SCORE_PER_LINE * clearedRows.size() * clearedRows.size();
         return new ClearRow(clearedRows.size(), tmp, scoreBonus);
     }
 
