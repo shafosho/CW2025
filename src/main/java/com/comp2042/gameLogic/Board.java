@@ -1,5 +1,6 @@
 package com.comp2042.gameLogic;
 
+import com.comp2042.data.ClearRow;
 import com.comp2042.data.ViewData;
 
 public interface Board {

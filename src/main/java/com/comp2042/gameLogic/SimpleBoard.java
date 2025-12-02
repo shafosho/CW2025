@@ -1,5 +1,6 @@
 package com.comp2042.gameLogic;
 
+import com.comp2042.data.ClearRow;
 import com.comp2042.data.NextShapeInfo;
 import com.comp2042.data.ViewData;
 import com.comp2042.logic.bricks.Brick;

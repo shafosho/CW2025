@@ -1,5 +1,10 @@
-package com.comp2042.gameLogic;
+package com.comp2042.data;
 
+import com.comp2042.gameLogic.MatrixOperations;
+
+/**
+ * Stores information about lines cleared during a game tick.
+ */
 public final class ClearRow {
 
     private final int linesRemoved;
