@@ -86,7 +86,7 @@ public class GuiController implements Initializable {
                         moveDown(new MoveEvent(EventType.DOWN, EventSource.USER));
                         keyEvent.consume();
                     }
-                    // Feature: Hard Drop on Space Bar (FIXED HERE)
+                    // Feature: Hard Drop on Space Bar
                     if (keyEvent.getCode() == KeyCode.SPACE) {
                         // Added .getViewData() to extract the correct object
                         refreshBrick(eventListener.onHardDropEvent(new MoveEvent(EventType.HARD_DROP, EventSource.USER)).getViewData());
