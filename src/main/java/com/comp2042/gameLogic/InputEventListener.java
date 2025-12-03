@@ -14,5 +14,8 @@ public interface InputEventListener {
 
     ViewData onRotateEvent(MoveEvent event);
 
+    // Feature: Handle the hard drop action
+    DownData onHardDropEvent(MoveEvent event);
+
     void createNewGame();
 }

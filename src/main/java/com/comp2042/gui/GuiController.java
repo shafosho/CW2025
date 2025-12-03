@@ -5,7 +5,7 @@ import com.comp2042.data.EventSource;
 import com.comp2042.data.EventType;
 import com.comp2042.data.MoveEvent;
 import com.comp2042.data.ViewData;
-import com.comp2042.gameLogic.InputEventListener; // Or .logic if you renamed it
+import com.comp2042.gameLogic.InputEventListener;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.beans.property.BooleanProperty;
@@ -86,6 +86,12 @@ public class GuiController implements Initializable {
                         moveDown(new MoveEvent(EventType.DOWN, EventSource.USER));
                         keyEvent.consume();
                     }
+                    // Feature: Hard Drop on Space Bar (FIXED HERE)
+                    if (keyEvent.getCode() == KeyCode.SPACE) {
+                        // Added .getViewData() to extract the correct object
+                        refreshBrick(eventListener.onHardDropEvent(new MoveEvent(EventType.HARD_DROP, EventSource.USER)).getViewData());
+                        keyEvent.consume();
+                    }
                 }
                 if (keyEvent.getCode() == KeyCode.N) {
                     newGame(null);
@@ -135,37 +141,18 @@ public class GuiController implements Initializable {
     private Paint getFillColor(int i) {
         Paint returnPaint;
         switch (i) {
-            case 0:
-                returnPaint = Color.TRANSPARENT;
-                break;
-            case 1:
-                returnPaint = Color.AQUA;
-                break;
-            case 2:
-                returnPaint = Color.BLUEVIOLET;
-                break;
-            case 3:
-                returnPaint = Color.DARKGREEN;
-                break;
-            case 4:
-                returnPaint = Color.YELLOW;
-                break;
-            case 5:
-                returnPaint = Color.RED;
-                break;
-            case 6:
-                returnPaint = Color.BEIGE;
-                break;
-            case 7:
-                returnPaint = Color.BURLYWOOD;
-                break;
-            default:
-                returnPaint = Color.WHITE;
-                break;
+            case 0: returnPaint = Color.TRANSPARENT; break;
+            case 1: returnPaint = Color.AQUA; break;
+            case 2: returnPaint = Color.BLUEVIOLET; break;
+            case 3: returnPaint = Color.DARKGREEN; break;
+            case 4: returnPaint = Color.YELLOW; break;
+            case 5: returnPaint = Color.RED; break;
+            case 6: returnPaint = Color.BEIGE; break;
+            case 7: returnPaint = Color.BURLYWOOD; break;
+            default: returnPaint = Color.WHITE; break;
         }
         return returnPaint;
     }
-
 
     private void refreshBrick(ViewData brick) {
         if (isPause.getValue() == Boolean.FALSE) {
