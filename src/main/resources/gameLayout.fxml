@@ -15,7 +15,14 @@
 
     <BorderPane styleClass="gameBoard" fx:id="gameBoard">
         <center>
-            <GridPane fx:id="gamePanel" hgap="1" vgap="1" layoutY="30" layoutX="40"/>
+            <StackPane>
+                <GridPane fx:id="gamePanel" hgap="1" vgap="1"/>
+
+                <VBox fx:id="pauseMenu" visible="false" alignment="CENTER" style="-fx-background-color: rgba(0,0,0,0.7);">
+                    <Label text="PAUSED" styleClass="gameOverStyle" style="-fx-text-fill: white;"/>
+                    <Label text="Press P to Resume" styleClass="scoreClass" style="-fx-font-size: 20px; -fx-fill: white;"/>
+                </VBox>
+            </StackPane>
         </center>
     </BorderPane>
 

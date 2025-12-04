@@ -21,6 +21,7 @@ import javafx.scene.effect.Reflection;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
@@ -49,6 +50,9 @@ public class GuiController implements Initializable {
     @FXML
     private Label scoreLabel;
 
+    @FXML
+    private VBox pauseMenu; // Added: Link to the Pause Menu in FXML
+
     private Rectangle[][] displayMatrix;
 
     private InputEventListener eventListener;
@@ -66,9 +70,18 @@ public class GuiController implements Initializable {
         Font.loadFont(getClass().getClassLoader().getResource("digital.ttf").toExternalForm(), 38);
         gamePanel.setFocusTraversable(true);
         gamePanel.requestFocus();
+
         gamePanel.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent keyEvent) {
+                // 1. Pause Logic (Global key)
+                if (keyEvent.getCode() == KeyCode.P) {
+                    togglePause();
+                    keyEvent.consume();
+                    return; // Stop processing other keys if we just paused/unpaused
+                }
+
+                // 2. Game Logic (Only runs if NOT paused and NOT Game Over)
                 if (isPause.getValue() == Boolean.FALSE && isGameOver.getValue() == Boolean.FALSE) {
                     if (keyEvent.getCode() == KeyCode.LEFT || keyEvent.getCode() == KeyCode.A) {
                         refreshBrick(eventListener.onLeftEvent(new MoveEvent(EventType.LEFT, EventSource.USER)));
@@ -86,24 +99,47 @@ public class GuiController implements Initializable {
                         moveDown(new MoveEvent(EventType.DOWN, EventSource.USER));
                         keyEvent.consume();
                     }
-                    // Feature: Hard Drop on Space Bar
                     if (keyEvent.getCode() == KeyCode.SPACE) {
-                        // Added .getViewData() to extract the correct object
                         refreshBrick(eventListener.onHardDropEvent(new MoveEvent(EventType.HARD_DROP, EventSource.USER)).getViewData());
                         keyEvent.consume();
                     }
                 }
+
+                // 3. New Game Logic
                 if (keyEvent.getCode() == KeyCode.N) {
                     newGame(null);
                 }
             }
         });
+
         gameOverPanel.setVisible(false);
+        pauseMenu.setVisible(false); // Ensure hidden at start
 
         final Reflection reflection = new Reflection();
         reflection.setFraction(0.8);
         reflection.setTopOpacity(0.9);
         reflection.setTopOffset(-12);
+    }
+
+    /**
+     * Toggles the game between Playing and Paused states.
+     */
+    private void togglePause() {
+        if (isGameOver.get()) return; // Cannot pause if dead
+
+        if (isPause.get()) {
+            // Resume Game
+            isPause.set(false);
+            timeLine.play();
+            pauseMenu.setVisible(false);
+            gamePanel.setOpacity(1.0); // Full brightness
+        } else {
+            // Pause Game
+            isPause.set(true);
+            timeLine.stop();
+            pauseMenu.setVisible(true);
+            gamePanel.setOpacity(0.3); // Dim the board
+        }
     }
 
     public void initGameView(int[][] boardMatrix, ViewData brick) {
@@ -215,6 +251,10 @@ public class GuiController implements Initializable {
         timeLine.play();
         isPause.setValue(Boolean.FALSE);
         isGameOver.setValue(Boolean.FALSE);
+
+        // Reset Pause state
+        pauseMenu.setVisible(false);
+        gamePanel.setOpacity(1.0);
     }
 
     public void pauseGame(ActionEvent actionEvent) {
