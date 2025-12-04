@@ -55,6 +55,9 @@ public class GuiController implements Initializable {
     private Label linesLabel; // NEW
 
     @FXML
+    private GridPane nextBrickPanel; // NEW: The Next Piece Grid
+
+    @FXML
     private VBox pauseMenu;
 
     private Rectangle[][] displayMatrix;
@@ -62,6 +65,7 @@ public class GuiController implements Initializable {
     private InputEventListener eventListener;
 
     private Rectangle[][] rectangles;
+    private Rectangle[][] nextBrickRectangles; // NEW: The rectangles for the preview
 
     private Timeline timeLine;
 
@@ -119,6 +123,29 @@ public class GuiController implements Initializable {
         reflection.setFraction(0.8);
         reflection.setTopOpacity(0.9);
         reflection.setTopOffset(-12);
+
+        // Feature: Initialize the Next Brick preview grid
+        initNextBrickView();
+    }
+
+    /**
+     * Creates the 4x4 grid of empty rectangles for the Next Piece preview.
+     */
+    private void initNextBrickView() {
+        nextBrickRectangles = new Rectangle[4][4];
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                Rectangle rectangle = new Rectangle(BRICK_SIZE, BRICK_SIZE);
+                rectangle.setFill(Color.TRANSPARENT);
+
+                // Fix: Add rounded corners to match the main game style
+                rectangle.setArcWidth(9);
+                rectangle.setArcHeight(9);
+
+                nextBrickRectangles[i][j] = rectangle;
+                nextBrickPanel.add(rectangle, j, i);
+            }
+        }
     }
 
     private void togglePause() {
@@ -160,6 +187,8 @@ public class GuiController implements Initializable {
         brickPanel.setLayoutX(gamePanel.getLayoutX() + brick.getxPosition() * brickPanel.getVgap() + brick.getxPosition() * BRICK_SIZE);
         brickPanel.setLayoutY(-42 + gamePanel.getLayoutY() + brick.getyPosition() * brickPanel.getHgap() + brick.getyPosition() * BRICK_SIZE);
 
+        // Feature: Show the next brick immediately when the game starts
+        refreshNextBrick(brick);
 
         timeLine = new Timeline(new KeyFrame(
                 Duration.millis(400),
@@ -192,6 +221,64 @@ public class GuiController implements Initializable {
             for (int i = 0; i < brick.getBrickData().length; i++) {
                 for (int j = 0; j < brick.getBrickData()[i].length; j++) {
                     setRectangleData(brick.getBrickData()[i][j], rectangles[i][j]);
+                }
+            }
+            // Feature: Update the preview whenever the active brick updates (e.g. spawns)
+            refreshNextBrick(brick);
+        }
+    }
+
+    /**
+     * Updates the visuals for the Next Brick preview panel with centering logic.
+     */
+    private void refreshNextBrick(ViewData brick) {
+        int[][] nextData = brick.getNextBrickData();
+
+        // 1. Clear previous state
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                nextBrickRectangles[i][j].setFill(Color.TRANSPARENT);
+            }
+        }
+
+        // 2. Find the actual bounds of the piece (min/max X and Y)
+        int minRow = 4, maxRow = 0, minCol = 4, maxCol = 0;
+        boolean hasBlock = false;
+
+        for (int i = 0; i < nextData.length; i++) {
+            for (int j = 0; j < nextData[i].length; j++) {
+                if (nextData[i][j] != 0) {
+                    if (i < minRow) minRow = i;
+                    if (i > maxRow) maxRow = i;
+                    if (j < minCol) minCol = j;
+                    if (j > maxCol) maxCol = j;
+                    hasBlock = true;
+                }
+            }
+        }
+
+        if (!hasBlock) return; // Should not happen
+
+        // 3. Calculate piece dimensions
+        int pieceHeight = maxRow - minRow + 1;
+        int pieceWidth = maxCol - minCol + 1;
+
+        // 4. Calculate centering offset (Integers truncate, so this is approximate but better)
+        int startRow = (4 - pieceHeight) / 2;
+        int startCol = (4 - pieceWidth) / 2;
+
+        // 5. Draw the piece with the offset applied
+        for (int i = minRow; i <= maxRow; i++) {
+            for (int j = minCol; j <= maxCol; j++) {
+                if (nextData[i][j] != 0) {
+                    // Map local piece coordinates (i, j) to the centered grid coordinates
+                    int targetRow = startRow + (i - minRow);
+                    int targetCol = startCol + (j - minCol);
+
+                    // Safety check to ensure we stay within the 4x4 grid
+                    if (targetRow >= 0 && targetRow < 4 && targetCol >= 0 && targetCol < 4) {
+                        nextBrickRectangles[targetRow][targetCol].setFill(getFillColor(nextData[i][j]));
+                    }
                 }
             }
         }
@@ -228,19 +315,14 @@ public class GuiController implements Initializable {
         this.eventListener = eventListener;
     }
 
-    /**
-     * Binds score, level, and lines to the GUI.
-     * Also updates the game speed when the level changes.
-     */
     public void bindScore(IntegerProperty score, IntegerProperty level, IntegerProperty lines) {
         scoreLabel.textProperty().bind(score.asString("Score: %d"));
         levelLabel.textProperty().bind(level.asString("Level: %d"));
-        linesLabel.textProperty().bind(lines.asString("Lines CLeared: %d"));
+        linesLabel.textProperty().bind(lines.asString("Lines Cleared: %d"));
 
         // Speed Logic: For level changes
         level.addListener((observable, oldValue, newValue) -> {
             int newLevel = newValue.intValue();
-            // Start at 400ms, faster by 50ms per level, cap at 50ms
             int newSpeed = Math.max(50, 400 - ((newLevel - 1) * 50));
 
             System.out.println("Level " + newLevel + ": Speed set to " + newSpeed + "ms");

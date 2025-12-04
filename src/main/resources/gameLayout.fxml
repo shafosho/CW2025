@@ -16,6 +16,11 @@
     <Label fx:id="levelLabel" layoutX="350" layoutY="100" text="Level: 1" styleClass="scoreClass"/>
     <Label fx:id="linesLabel" layoutX="350" layoutY="150" text="Lines Cleared: 0" styleClass="scoreClass"/>
 
+    <VBox layoutX="350" layoutY="200" spacing="10">
+        <Label text="NEXT" styleClass="scoreClass"/>
+        <GridPane fx:id="nextBrickPanel" vgap="1" hgap="1" style="-fx-border-color: #333; -fx-border-width: 2px; -fx-background-color: #111;"/>
+    </VBox>
+
     <BorderPane styleClass="gameBoard" fx:id="gameBoard">
         <center>
             <StackPane>
