@@ -49,9 +49,13 @@ public class GuiController implements Initializable {
 
     @FXML
     private Label scoreLabel;
+    @FXML
+    private Label levelLabel; // NEW
+    @FXML
+    private Label linesLabel; // NEW
 
     @FXML
-    private VBox pauseMenu; // Added: Link to the Pause Menu in FXML
+    private VBox pauseMenu;
 
     private Rectangle[][] displayMatrix;
 
@@ -74,14 +78,12 @@ public class GuiController implements Initializable {
         gamePanel.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent keyEvent) {
-                // 1. Pause Logic (Global key)
                 if (keyEvent.getCode() == KeyCode.P) {
                     togglePause();
                     keyEvent.consume();
-                    return; // Stop processing other keys if we just paused/unpaused
+                    return;
                 }
 
-                // 2. Game Logic (Only runs if NOT paused and NOT Game Over)
                 if (isPause.getValue() == Boolean.FALSE && isGameOver.getValue() == Boolean.FALSE) {
                     if (keyEvent.getCode() == KeyCode.LEFT || keyEvent.getCode() == KeyCode.A) {
                         refreshBrick(eventListener.onLeftEvent(new MoveEvent(EventType.LEFT, EventSource.USER)));
@@ -104,8 +106,6 @@ public class GuiController implements Initializable {
                         keyEvent.consume();
                     }
                 }
-
-                // 3. New Game Logic
                 if (keyEvent.getCode() == KeyCode.N) {
                     newGame(null);
                 }
@@ -113,7 +113,7 @@ public class GuiController implements Initializable {
         });
 
         gameOverPanel.setVisible(false);
-        pauseMenu.setVisible(false); // Ensure hidden at start
+        pauseMenu.setVisible(false);
 
         final Reflection reflection = new Reflection();
         reflection.setFraction(0.8);
@@ -121,24 +121,19 @@ public class GuiController implements Initializable {
         reflection.setTopOffset(-12);
     }
 
-    /**
-     * Toggles the game between Playing and Paused states.
-     */
     private void togglePause() {
-        if (isGameOver.get()) return; // Cannot pause if dead
+        if (isGameOver.get()) return;
 
         if (isPause.get()) {
-            // Resume Game
             isPause.set(false);
             timeLine.play();
             pauseMenu.setVisible(false);
-            gamePanel.setOpacity(1.0); // Full brightness
+            gamePanel.setOpacity(1.0);
         } else {
-            // Pause Game
             isPause.set(true);
             timeLine.stop();
             pauseMenu.setVisible(true);
-            gamePanel.setOpacity(0.3); // Dim the board
+            gamePanel.setOpacity(0.5);
         }
     }
 
@@ -233,8 +228,31 @@ public class GuiController implements Initializable {
         this.eventListener = eventListener;
     }
 
-    public void bindScore(IntegerProperty integerProperty) {
-        scoreLabel.textProperty().bind(integerProperty.asString("Score: %d"));
+    /**
+     * Binds score, level, and lines to the GUI.
+     * Also updates the game speed when the level changes.
+     */
+    public void bindScore(IntegerProperty score, IntegerProperty level, IntegerProperty lines) {
+        scoreLabel.textProperty().bind(score.asString("Score: %d"));
+        levelLabel.textProperty().bind(level.asString("Level: %d"));
+        linesLabel.textProperty().bind(lines.asString("Lines CLeared: %d"));
+
+        // Speed Logic: For level changes
+        level.addListener((observable, oldValue, newValue) -> {
+            int newLevel = newValue.intValue();
+            // Start at 400ms, faster by 50ms per level, cap at 50ms
+            int newSpeed = Math.max(50, 400 - ((newLevel - 1) * 50));
+
+            System.out.println("Level " + newLevel + ": Speed set to " + newSpeed + "ms");
+
+            timeLine.stop();
+            timeLine = new Timeline(new KeyFrame(
+                    Duration.millis(newSpeed),
+                    ae -> moveDown(new MoveEvent(EventType.DOWN, EventSource.THREAD))
+            ));
+            timeLine.setCycleCount(Timeline.INDEFINITE);
+            timeLine.play();
+        });
     }
 
     public void gameOver() {
@@ -251,8 +269,6 @@ public class GuiController implements Initializable {
         timeLine.play();
         isPause.setValue(Boolean.FALSE);
         isGameOver.setValue(Boolean.FALSE);
-
-        // Reset Pause state
         pauseMenu.setVisible(false);
         gamePanel.setOpacity(1.0);
     }

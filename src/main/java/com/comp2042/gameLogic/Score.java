@@ -4,19 +4,24 @@ import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 
 /**
- * Manages the player's score.
- * Uses JavaFX properties so the GUI can automatically update when the score changes.
+ * Manages the player's score, level, and lines cleared.
  */
 public final class Score {
 
     private final IntegerProperty score = new SimpleIntegerProperty(0);
+    private final IntegerProperty level = new SimpleIntegerProperty(1);
+    private final IntegerProperty lines = new SimpleIntegerProperty(0);
 
-    /**
-     * Gets the score property for binding to the GUI.
-     * @return The IntegerProperty containing the current score
-     */
     public IntegerProperty scoreProperty() {
         return score;
+    }
+
+    public IntegerProperty levelProperty() {
+        return level;
+    }
+
+    public IntegerProperty linesProperty() {
+        return lines;
     }
 
     /**
@@ -28,9 +33,26 @@ public final class Score {
     }
 
     /**
-     * Resets the score to zero.
+     * Adds cleared lines and updates the level.
+     * Level increases every 10 lines.
+     * @param count Number of lines cleared
+     */
+    public void addLines(int count) {
+        if (count > 0) {
+            int currentLines = lines.getValue() + count;
+            lines.setValue(currentLines);
+            // Calculate level: 1 + (Total Lines / 10)
+            // Example: 25 lines = Level 3
+            level.setValue(1 + (currentLines / 10));
+        }
+    }
+
+    /**
+     * Resets all stats for a new game.
      */
     public void reset() {
         score.setValue(0);
+        lines.setValue(0);
+        level.setValue(1);
     }
 }

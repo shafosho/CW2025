@@ -23,7 +23,13 @@ public class GameController implements InputEventListener {
         board.createNewBrick();
         viewGuiController.setEventListener(this);
         viewGuiController.initGameView(board.getBoardMatrix(), board.getViewData());
-        viewGuiController.bindScore(board.getScore().scoreProperty());
+
+        // Updated: Bind Score, Level, and Lines to the GUI
+        viewGuiController.bindScore(
+                board.getScore().scoreProperty(),
+                board.getScore().levelProperty(),
+                board.getScore().linesProperty()
+        );
     }
 
     @Override
@@ -34,9 +40,13 @@ public class GameController implements InputEventListener {
         if (!canMove) {
             board.mergeBrickToBackground();
             clearRow = board.clearRows();
+
             if (clearRow.getLinesRemoved() > 0) {
                 board.getScore().add(clearRow.getScoreBonus());
+                // Feature: Update lines count to check for Level Up
+                board.getScore().addLines(clearRow.getLinesRemoved());
             }
+
             if (board.createNewBrick()) {
                 viewGuiController.gameOver();
             }
@@ -82,6 +92,8 @@ public class GameController implements InputEventListener {
 
         if (clearRow.getLinesRemoved() > 0) {
             board.getScore().add(clearRow.getScoreBonus());
+            // Feature: Update lines count to check for Level Up
+            board.getScore().addLines(clearRow.getLinesRemoved());
         }
 
         if (board.createNewBrick()) {

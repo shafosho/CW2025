@@ -13,6 +13,9 @@
 
     <Label fx:id="scoreLabel" layoutX="350" layoutY="50" text="Score: 0" styleClass="scoreClass"/>
 
+    <Label fx:id="levelLabel" layoutX="350" layoutY="100" text="Level: 1" styleClass="scoreClass"/>
+    <Label fx:id="linesLabel" layoutX="350" layoutY="150" text="Lines Cleared: 0" styleClass="scoreClass"/>
+
     <BorderPane styleClass="gameBoard" fx:id="gameBoard">
         <center>
             <StackPane>
