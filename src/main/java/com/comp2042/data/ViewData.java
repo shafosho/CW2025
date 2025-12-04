@@ -12,6 +12,7 @@ public final class ViewData {
     private final int xPosition;
     private final int yPosition;
     private final int[][] nextBrickData;
+    private final int[][] holdBrickData;
 
     /**
      * Creates a snapshot of the current game view.
@@ -19,12 +20,14 @@ public final class ViewData {
      * @param xPosition The X coordinate of the brick
      * @param yPosition The Y coordinate of the brick
      * @param nextBrickData The shape of the next upcoming brick
+     * @param holdBrickData The shape of the held block
      */
-    public ViewData(int[][] brickData, int xPosition, int yPosition, int[][] nextBrickData) {
+    public ViewData(int[][] brickData, int xPosition, int yPosition, int[][] nextBrickData, int[][] holdBrickData) {
         this.brickData = brickData;
         this.xPosition = xPosition;
         this.yPosition = yPosition;
         this.nextBrickData = nextBrickData;
+        this.holdBrickData = holdBrickData;
     }
 
     public int[][] getBrickData() {
@@ -41,5 +44,9 @@ public final class ViewData {
 
     public int[][] getNextBrickData() {
         return MatrixOperations.copy(nextBrickData);
+    }
+
+    public int[][] getHoldBrickData() {
+        return (holdBrickData == null) ? null : MatrixOperations.copy(holdBrickData);
     }
 }

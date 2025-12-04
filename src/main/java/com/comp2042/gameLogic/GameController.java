@@ -106,6 +106,16 @@ public class GameController implements InputEventListener {
     }
 
     @Override
+    public ViewData onHoldEvent(MoveEvent event) {
+        // Cast board to SimpleBoard if 'Board' interface doesn't have holdBrick()
+        // Or update Board interface. For now, it's casted.
+        if (board instanceof SimpleBoard) {
+            ((SimpleBoard) board).holdBrick();
+        }
+        return board.getViewData();
+    }
+
+    @Override
     public void createNewGame() {
         board.newGame();
         viewGuiController.refreshGameBackground(board.getBoardMatrix());

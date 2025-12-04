@@ -8,5 +8,6 @@ public enum EventType {
     LEFT,   // Move left one column
     RIGHT,  // Move right one column
     ROTATE, // Rotate 90 degrees
-    HARD_DROP // Drop instantly to the bottom
+    HARD_DROP, // Drop instantly to the bottom
+    HOLD // Holds bricks
 }

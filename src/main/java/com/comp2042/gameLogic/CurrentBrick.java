@@ -49,4 +49,13 @@ class CurrentBrick { // Package-private for encapsulation
         this.brick = brick;
         currentShapeIndex = 0;
     }
+
+    /**
+     * Gets the actual Brick object (e.g. TBrick, IBrick).
+     * Used for the Hold functionality to swap bricks.
+     * @return The underlying Brick object
+     */
+    public Brick getBrick() {
+        return brick;
+    }
 }

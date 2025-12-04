@@ -17,5 +17,8 @@ public interface InputEventListener {
     // Feature: Handle the hard drop action
     DownData onHardDropEvent(MoveEvent event);
 
+    // Feature: Hold Piece
+    ViewData onHoldEvent(MoveEvent event);
+
     void createNewGame();
 }

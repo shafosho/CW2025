@@ -50,12 +50,15 @@ public class GuiController implements Initializable {
     @FXML
     private Label scoreLabel;
     @FXML
-    private Label levelLabel; // NEW
+    private Label levelLabel;
     @FXML
-    private Label linesLabel; // NEW
+    private Label linesLabel;
 
     @FXML
-    private GridPane nextBrickPanel; // NEW: The Next Piece Grid
+    private GridPane nextBrickPanel; // The Next Piece Grid
+
+    @FXML
+    private GridPane holdBrickPanel; // The Hold Piece Grid
 
     @FXML
     private VBox pauseMenu;
@@ -65,7 +68,8 @@ public class GuiController implements Initializable {
     private InputEventListener eventListener;
 
     private Rectangle[][] rectangles;
-    private Rectangle[][] nextBrickRectangles; // NEW: The rectangles for the preview
+    private Rectangle[][] nextBrickRectangles; // The rectangles for the preview
+    private Rectangle[][] holdBrickRectangles; // Rectangles for hold display
 
     private Timeline timeLine;
 
@@ -109,6 +113,11 @@ public class GuiController implements Initializable {
                         refreshBrick(eventListener.onHardDropEvent(new MoveEvent(EventType.HARD_DROP, EventSource.USER)).getViewData());
                         keyEvent.consume();
                     }
+                    // Feature: Hold Brick on 'C' Key
+                    if (keyEvent.getCode() == KeyCode.C) {
+                        refreshBrick(eventListener.onHoldEvent(new MoveEvent(EventType.HOLD, EventSource.USER)));
+                        keyEvent.consume();
+                    }
                 }
                 if (keyEvent.getCode() == KeyCode.N) {
                     newGame(null);
@@ -126,6 +135,8 @@ public class GuiController implements Initializable {
 
         // Feature: Initialize the Next Brick preview grid
         initNextBrickView();
+        // Initialize the Hold Brick preview grid
+        initHoldBrickView();
     }
 
     /**
@@ -144,6 +155,21 @@ public class GuiController implements Initializable {
 
                 nextBrickRectangles[i][j] = rectangle;
                 nextBrickPanel.add(rectangle, j, i);
+            }
+        }
+    }
+
+    // Initialize the Hold Grid (Same style as Next Brick)
+    private void initHoldBrickView() {
+        holdBrickRectangles = new Rectangle[4][4];
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                Rectangle rectangle = new Rectangle(BRICK_SIZE, BRICK_SIZE);
+                rectangle.setFill(Color.TRANSPARENT);
+                rectangle.setArcWidth(9);
+                rectangle.setArcHeight(9);
+                holdBrickRectangles[i][j] = rectangle;
+                holdBrickPanel.add(rectangle, j, i);
             }
         }
     }
@@ -189,6 +215,8 @@ public class GuiController implements Initializable {
 
         // Feature: Show the next brick immediately when the game starts
         refreshNextBrick(brick);
+        // Refresh hold brick
+        refreshHoldBrick(brick);
 
         timeLine = new Timeline(new KeyFrame(
                 Duration.millis(400),
@@ -223,8 +251,10 @@ public class GuiController implements Initializable {
                     setRectangleData(brick.getBrickData()[i][j], rectangles[i][j]);
                 }
             }
-            // Feature: Update the preview whenever the active brick updates (e.g. spawns)
+            // Feature: Update the preview whenever the active brick updates (spawns)
             refreshNextBrick(brick);
+            // Update hold display
+            refreshHoldBrick(brick);
         }
     }
 
@@ -278,6 +308,53 @@ public class GuiController implements Initializable {
                     // Safety check to ensure we stay within the 4x4 grid
                     if (targetRow >= 0 && targetRow < 4 && targetCol >= 0 && targetCol < 4) {
                         nextBrickRectangles[targetRow][targetCol].setFill(getFillColor(nextData[i][j]));
+                    }
+                }
+            }
+        }
+    }
+
+    // Update the Hold Grid (Same centering logic as refreshNextBrick)
+    private void refreshHoldBrick(ViewData brick) {
+        int[][] holdData = brick.getHoldBrickData();
+
+        // Clear previous state
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                holdBrickRectangles[i][j].setFill(Color.TRANSPARENT);
+            }
+        }
+
+        if (holdData == null) return; // Nothing held yet
+
+        // Find bounds
+        int minRow = 4, maxRow = 0, minCol = 4, maxCol = 0;
+        boolean hasBlock = false;
+        for (int i = 0; i < holdData.length; i++) {
+            for (int j = 0; j < holdData[i].length; j++) {
+                if (holdData[i][j] != 0) {
+                    if (i < minRow) minRow = i;
+                    if (i > maxRow) maxRow = i;
+                    if (j < minCol) minCol = j;
+                    if (j > maxCol) maxCol = j;
+                    hasBlock = true;
+                }
+            }
+        }
+        if (!hasBlock) return;
+
+        // Calculate offset
+        int startRow = (4 - (maxRow - minRow + 1)) / 2;
+        int startCol = (4 - (maxCol - minCol + 1)) / 2;
+
+        // Draw
+        for (int i = minRow; i <= maxRow; i++) {
+            for (int j = minCol; j <= maxCol; j++) {
+                if (holdData[i][j] != 0) {
+                    int targetRow = startRow + (i - minRow);
+                    int targetCol = startCol + (j - minCol);
+                    if (targetRow >= 0 && targetRow < 4 && targetCol >= 0 && targetCol < 4) {
+                        holdBrickRectangles[targetRow][targetCol].setFill(getFillColor(holdData[i][j]));
                     }
                 }
             }

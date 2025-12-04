@@ -26,6 +26,10 @@ public class SimpleBoard implements Board {
     private Point currentOffset;
     private final Score score;
 
+    // Feature: Hold Variables
+    private Brick holdBrick;
+    private boolean canHold = true; // Can only hold once per turn
+
     /**
      * Creates the board with a specific height and width.
      * @param rows The height of the board (number of rows)
@@ -117,13 +121,15 @@ public class SimpleBoard implements Board {
      */
     @Override
     public boolean createNewBrick() {
-        Brick currentBrick = brickGenerator.getBrick();
-        this.currentBrick.setBrick(currentBrick);
+        Brick nextBrick = brickGenerator.getBrick();
+        currentBrick.setBrick(nextBrick);
 
         // Refactor: Use constants instead of magic numbers
         currentOffset = new Point(SPAWN_COL, SPAWN_ROW);
 
-        return MatrixOperations.intersect(currentGameMatrix, this.currentBrick.getCurrentShape(), (int) currentOffset.getX(), (int) currentOffset.getY());
+        canHold = true; // Feature: Reset hold permission on new spawn
+
+        return MatrixOperations.intersect(currentGameMatrix, currentBrick.getCurrentShape(), (int) currentOffset.getX(), (int) currentOffset.getY());
     }
 
     @Override
@@ -133,7 +139,35 @@ public class SimpleBoard implements Board {
 
     @Override
     public ViewData getViewData() {
-        return new ViewData(currentBrick.getCurrentShape(), (int) currentOffset.getX(), (int) currentOffset.getY(), brickGenerator.getNextBrick().getShapeMatrix().get(0));
+        int[][] holdShape = (holdBrick == null) ? null : holdBrick.getShapeMatrix().get(0);
+        return new ViewData(
+                currentBrick.getCurrentShape(),
+                (int) currentOffset.getX(),
+                (int) currentOffset.getY(),
+                brickGenerator.getNextBrick().getShapeMatrix().get(0),
+                holdShape // Feature: Pass hold data to view
+        );
+    }
+
+    // Feature: Hold Functionality
+    // Swaps the current brick with the held brick
+    public boolean holdBrick() {
+        if (!canHold) return false;
+
+        if (holdBrick == null) {
+            // No brick held yet: Save current, spawn next
+            holdBrick = currentBrick.getBrick();
+            createNewBrick();
+        } else {
+            // Swap current with held
+            Brick temp = currentBrick.getBrick();
+            currentBrick.setBrick(holdBrick);
+            holdBrick = temp;
+            currentOffset = new Point(SPAWN_COL, SPAWN_ROW);
+        }
+
+        canHold = false; // Disable holding until next spawn
+        return true;
     }
 
     /**
@@ -167,6 +201,7 @@ public class SimpleBoard implements Board {
     public void newGame() {
         currentGameMatrix = new int[rows][cols];
         score.reset();
+        holdBrick = null; // Feature: Reset hold
         createNewBrick();
     }
 }
