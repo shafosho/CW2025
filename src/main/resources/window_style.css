@@ -70,3 +70,39 @@
     -fx-fill: yellow;
     -fx-text-fill: yellow;
 }
+
+/* For the Hold and Next boxes */
+.previewBox {
+    -fx-border-color: #333333;
+    -fx-border-width: 2px;
+    -fx-background-color: #111111;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+    -fx-padding: 5px;
+}
+
+/* For the Pause Menu Overlay */
+.pauseMenu {
+    -fx-background-color: rgba(0, 0, 0, 0.7);
+    -fx-padding: 20px;
+    -fx-background-radius: 10px;
+    -fx-border-color: white;
+    -fx-border-width: 2px;
+    -fx-border-radius: 10px;
+}
+
+/* For the "PAUSED" text */
+.pausedText {
+    -fx-font-family: "Let's go Digital";
+    -fx-font-size: 48px;
+    -fx-fill: white;
+    -fx-text-fill: white;
+}
+
+/* For "Press P to Resume" */
+.resumeText {
+    -fx-font-family: "Let's go Digital";
+    -fx-font-size: 20px;
+    -fx-fill: yellow;
+    -fx-text-fill: yellow;
+}

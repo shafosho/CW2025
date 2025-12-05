@@ -18,23 +18,23 @@
 
     <VBox layoutX="450" layoutY="200" spacing="10">
         <Label text="HOLD" styleClass="scoreClass"/>
-        <GridPane fx:id="holdBrickPanel" vgap="1" hgap="1" style="-fx-border-color: #333; -fx-border-width: 2px; -fx-background-color: #111;"/>
+        <GridPane fx:id="holdBrickPanel" vgap="1" hgap="1" styleClass="previewBox"/>
     </VBox>
 
     <VBox layoutX="350" layoutY="200" spacing="10">
         <Label text="NEXT" styleClass="scoreClass"/>
-        <GridPane fx:id="nextBrickPanel" vgap="1" hgap="1" style="-fx-border-color: #333; -fx-border-width: 2px; -fx-background-color: #111;"/>
+        <GridPane fx:id="nextBrickPanel" vgap="1" hgap="1" styleClass="previewBox"/>
     </VBox>
 
-    <BorderPane styleClass="gameBoard" fx:id="gameBoard">
+    <BorderPane styleClass="gameBoard" fx:id="gameBoard" layoutX="50" layoutY="30">
         <center>
             <StackPane>
                 <GridPane fx:id="shadowBrickPanel" vgap="1" hgap="1"/>
                 <GridPane fx:id="gamePanel" hgap="1" vgap="1"/>
 
-                <VBox fx:id="pauseMenu" visible="false" alignment="CENTER" style="-fx-background-color: rgba(0,0,0,0.7);">
-                    <Label text="PAUSED" styleClass="gameOverStyle" style="-fx-text-fill: white;"/>
-                    <Label text="Press P to Resume" styleClass="scoreClass" style="-fx-font-size: 20px; -fx-fill: white;"/>
+                <VBox fx:id="pauseMenu" visible="false" alignment="CENTER" styleClass="pauseMenu">
+                    <Label text="PAUSED" styleClass="pausedText"/>
+                    <Label text="Press P to Resume" styleClass="resumeText"/>
                 </VBox>
             </StackPane>
         </center>
