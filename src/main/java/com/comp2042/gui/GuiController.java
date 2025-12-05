@@ -45,6 +45,9 @@ public class GuiController implements Initializable {
     private GridPane brickPanel;
 
     @FXML
+    private GridPane shadowBrickPanel; // Shadow Grid
+
+    @FXML
     private GameOverPanel gameOverPanel;
 
     @FXML
@@ -68,8 +71,9 @@ public class GuiController implements Initializable {
     private InputEventListener eventListener;
 
     private Rectangle[][] rectangles;
+    private Rectangle[][] shadowRectangles; // The rectangles for the shadow
     private Rectangle[][] nextBrickRectangles; // The rectangles for the preview
-    private Rectangle[][] holdBrickRectangles; // Rectangles for hold display
+    private Rectangle[][] holdBrickRectangles; // The rectangles for hold display
 
     private Timeline timeLine;
 
@@ -210,13 +214,31 @@ public class GuiController implements Initializable {
                 brickPanel.add(rectangle, j, i);
             }
         }
+
+        // Initialize Shadow Rectangles
+        shadowRectangles = new Rectangle[boardMatrix.length][boardMatrix[0].length];
+        for (int i = 2; i < boardMatrix.length; i++) {
+            for (int j = 0; j < boardMatrix[i].length; j++) {
+                Rectangle rect = new Rectangle(BRICK_SIZE, BRICK_SIZE);
+                rect.setFill(Color.TRANSPARENT);
+                shadowRectangles[i][j] = rect;
+                shadowBrickPanel.add(rect, j, i - 2);
+            }
+        }
+
         brickPanel.setLayoutX(gamePanel.getLayoutX() + brick.getxPosition() * brickPanel.getVgap() + brick.getxPosition() * BRICK_SIZE);
         brickPanel.setLayoutY(-42 + gamePanel.getLayoutY() + brick.getyPosition() * brickPanel.getHgap() + brick.getyPosition() * BRICK_SIZE);
+
+        // Set shadow panel position to match game panel
+        shadowBrickPanel.setLayoutX(gamePanel.getLayoutX());
+        shadowBrickPanel.setLayoutY(gamePanel.getLayoutY());
 
         // Feature: Show the next brick immediately when the game starts
         refreshNextBrick(brick);
         // Refresh hold brick
         refreshHoldBrick(brick);
+        // Initial shadow draw
+        refreshShadowBrick(brick);
 
         timeLine = new Timeline(new KeyFrame(
                 Duration.millis(400),
@@ -227,19 +249,17 @@ public class GuiController implements Initializable {
     }
 
     private Paint getFillColor(int i) {
-        Paint returnPaint;
         switch (i) {
-            case 0: returnPaint = Color.TRANSPARENT; break;
-            case 1: returnPaint = Color.AQUA; break;
-            case 2: returnPaint = Color.BLUEVIOLET; break;
-            case 3: returnPaint = Color.DARKGREEN; break;
-            case 4: returnPaint = Color.YELLOW; break;
-            case 5: returnPaint = Color.RED; break;
-            case 6: returnPaint = Color.BEIGE; break;
-            case 7: returnPaint = Color.BURLYWOOD; break;
-            default: returnPaint = Color.WHITE; break;
+            case 0: return Color.TRANSPARENT;
+            case 1: return Color.AQUA;
+            case 2: return Color.BLUEVIOLET;
+            case 3: return Color.DARKGREEN;
+            case 4: return Color.YELLOW;
+            case 5: return Color.RED;
+            case 6: return Color.BEIGE;
+            case 7: return Color.BURLYWOOD;
+            default: return Color.WHITE;
         }
-        return returnPaint;
     }
 
     private void refreshBrick(ViewData brick) {
@@ -251,10 +271,46 @@ public class GuiController implements Initializable {
                     setRectangleData(brick.getBrickData()[i][j], rectangles[i][j]);
                 }
             }
-            // Feature: Update the preview whenever the active brick updates (spawns)
+            // Feature: Update the preview whenever the active brick updates (e.g. spawns)
             refreshNextBrick(brick);
             // Update hold display
             refreshHoldBrick(brick);
+            // Update shadow
+            refreshShadowBrick(brick);
+        }
+    }
+
+    // Draw the Shadow Brick
+    private void refreshShadowBrick(ViewData brick) {
+        // Clear previous shadow
+        for (int i = 2; i < shadowRectangles.length; i++) {
+            for (int j = 0; j < shadowRectangles[i].length; j++) {
+                shadowRectangles[i][j].setFill(Color.TRANSPARENT);
+            }
+        }
+
+        int[][] shape = brick.getBrickData();
+        int shadowY = brick.getShadowY();
+        int startX = brick.getxPosition();
+
+        for (int i = 0; i < shape.length; i++) {
+            for (int j = 0; j < shape[i].length; j++) {
+                if (shape[i][j] != 0) {
+                    // Coordinate mapping (i=row, j=col based on your matrix logic)
+                    int targetY = shadowY + i;
+                    int targetX = startX + j;
+
+                    // Check bounds (safety)
+                    if (targetY >= 2 && targetY < shadowRectangles.length &&
+                            targetX >= 0 && targetX < shadowRectangles[0].length) {
+
+                        shadowRectangles[targetY][targetX].setFill(Color.GRAY);
+                        shadowRectangles[targetY][targetX].setOpacity(0.3);
+                        shadowRectangles[targetY][targetX].setArcWidth(9);
+                        shadowRectangles[targetY][targetX].setArcHeight(9);
+                    }
+                }
+            }
         }
     }
 

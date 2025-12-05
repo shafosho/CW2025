@@ -29,6 +29,7 @@
     <BorderPane styleClass="gameBoard" fx:id="gameBoard">
         <center>
             <StackPane>
+                <GridPane fx:id="shadowBrickPanel" vgap="1" hgap="1"/>
                 <GridPane fx:id="gamePanel" hgap="1" vgap="1"/>
 
                 <VBox fx:id="pauseMenu" visible="false" alignment="CENTER" style="-fx-background-color: rgba(0,0,0,0.7);">

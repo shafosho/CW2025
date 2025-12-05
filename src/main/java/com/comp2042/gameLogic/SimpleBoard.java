@@ -145,8 +145,22 @@ public class SimpleBoard implements Board {
                 (int) currentOffset.getX(),
                 (int) currentOffset.getY(),
                 brickGenerator.getNextBrick().getShapeMatrix().get(0),
-                holdShape // Feature: Pass hold data to view
+                holdShape, // Feature: Pass hold data to view
+                getShadowY() // Feature: Pass the calculated shadow Y position
         );
+    }
+
+    /**
+     * Calculates the Y coordinate where the current brick would land if dropped.
+     * Used for the Ghost Piece/Shadow feature.
+     */
+    private int getShadowY() {
+        int shadowY = (int) currentOffset.getY();
+        // Keep moving down until we hit something
+        while (!MatrixOperations.intersect(currentGameMatrix, currentBrick.getCurrentShape(), (int) currentOffset.getX(), shadowY + 1)) {
+            shadowY++;
+        }
+        return shadowY;
     }
 
     // Feature: Hold Functionality
