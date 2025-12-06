@@ -34,6 +34,8 @@ import java.util.ResourceBundle;
 public class GuiController implements Initializable {
 
     private static final int BRICK_SIZE = 20;
+    private static final int BOARD_OFFSET_X = 65; // Matches FXML gameBoard layoutX
+    private static final int BOARD_OFFSET_Y = 50; // Matches FXML gameBoard layoutY
 
     @FXML
     private GridPane gamePanel;
@@ -226,12 +228,13 @@ public class GuiController implements Initializable {
             }
         }
 
-        brickPanel.setLayoutX(gamePanel.getLayoutX() + brick.getxPosition() * brickPanel.getVgap() + brick.getxPosition() * BRICK_SIZE);
-        brickPanel.setLayoutY(-42 + gamePanel.getLayoutY() + brick.getyPosition() * brickPanel.getHgap() + brick.getyPosition() * BRICK_SIZE);
+        // Apply Offset
+        brickPanel.setLayoutX(gamePanel.getLayoutX() + BOARD_OFFSET_X + brick.getxPosition() * brickPanel.getVgap() + brick.getxPosition() * BRICK_SIZE);
+        brickPanel.setLayoutY(-42 + gamePanel.getLayoutY() + BOARD_OFFSET_Y + brick.getyPosition() * brickPanel.getHgap() + brick.getyPosition() * BRICK_SIZE);
 
-        // Set shadow panel position to match game panel
-        shadowBrickPanel.setLayoutX(gamePanel.getLayoutX());
-        shadowBrickPanel.setLayoutY(gamePanel.getLayoutY());
+        // Set shadow panel position to match game panel + Offset
+        shadowBrickPanel.setLayoutX(gamePanel.getLayoutX() + BOARD_OFFSET_X);
+        shadowBrickPanel.setLayoutY(gamePanel.getLayoutY() + BOARD_OFFSET_Y);
 
         // Feature: Show the next brick immediately when the game starts
         refreshNextBrick(brick);
@@ -264,8 +267,9 @@ public class GuiController implements Initializable {
 
     private void refreshBrick(ViewData brick) {
         if (isPause.getValue() == Boolean.FALSE) {
-            brickPanel.setLayoutX(gamePanel.getLayoutX() + brick.getxPosition() * brickPanel.getVgap() + brick.getxPosition() * BRICK_SIZE);
-            brickPanel.setLayoutY(-42 + gamePanel.getLayoutY() + brick.getyPosition() * brickPanel.getHgap() + brick.getyPosition() * BRICK_SIZE);
+            // Apply Offset
+            brickPanel.setLayoutX(gamePanel.getLayoutX() + BOARD_OFFSET_X + brick.getxPosition() * brickPanel.getVgap() + brick.getxPosition() * BRICK_SIZE);
+            brickPanel.setLayoutY(-42 + gamePanel.getLayoutY() + BOARD_OFFSET_Y + brick.getyPosition() * brickPanel.getHgap() + brick.getyPosition() * BRICK_SIZE);
             for (int i = 0; i < brick.getBrickData().length; i++) {
                 for (int j = 0; j < brick.getBrickData()[i].length; j++) {
                     setRectangleData(brick.getBrickData()[i][j], rectangles[i][j]);
@@ -288,6 +292,9 @@ public class GuiController implements Initializable {
                 shadowRectangles[i][j].setFill(Color.TRANSPARENT);
             }
         }
+        // Apply Offset
+        shadowBrickPanel.setLayoutX(gamePanel.getLayoutX() + BOARD_OFFSET_X);
+        shadowBrickPanel.setLayoutY(gamePanel.getLayoutY() + BOARD_OFFSET_Y);
 
         int[][] shape = brick.getBrickData();
         int shadowY = brick.getShadowY();

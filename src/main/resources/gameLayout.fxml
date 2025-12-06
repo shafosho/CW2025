@@ -40,7 +40,7 @@
         </center>
     </BorderPane>
 
-    <Group fx:id="groupNotification" layoutX="14" layoutY="203">
+    <Group fx:id="groupNotification" layoutX="65" layoutY="260">
         <VBox alignment="CENTER">
             <GameOverPanel fx:id="gameOverPanel"/>
         </VBox>

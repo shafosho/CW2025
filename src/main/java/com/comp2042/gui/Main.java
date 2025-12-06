@@ -15,8 +15,8 @@ import java.net.URL;
  */
 public class Main extends Application {
 
-    private static final int WINDOW_WIDTH = 300;
-    private static final int WINDOW_HEIGHT = 510;
+    private static final int WINDOW_WIDTH = 650;
+    private static final int WINDOW_HEIGHT = 650;
     private static final String APP_TITLE = "TetrisJFX";
 
     @Override
@@ -34,6 +34,7 @@ public class Main extends Application {
         primaryStage.setTitle(APP_TITLE);
         Scene scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
         primaryStage.setScene(scene);
+        primaryStage.centerOnScreen(); // Appear in the middle of monitor
         primaryStage.show();
 
         // Initialize the Game Logic
