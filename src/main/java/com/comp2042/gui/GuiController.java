@@ -34,8 +34,8 @@ import java.util.ResourceBundle;
 public class GuiController implements Initializable {
 
     private static final int BRICK_SIZE = 20;
-    private static final int BOARD_OFFSET_X = 65; // Matches FXML gameBoard layoutX
-    private static final int BOARD_OFFSET_Y = 50; // Matches FXML gameBoard layoutY
+    private static final int BOARD_OFFSET_X = 32; // Matches FXML gameBoard layoutX
+    private static final int BOARD_OFFSET_Y = 42; // Matches FXML gameBoard layoutY
 
     @FXML
     private GridPane gamePanel;
@@ -132,6 +132,10 @@ public class GuiController implements Initializable {
         });
 
         gameOverPanel.setVisible(false);
+        // Connect the Game Over buttons
+        gameOverPanel.setReplayHandler(event -> newGame(null));
+        gameOverPanel.setExitHandler(event -> System.exit(0));
+
         pauseMenu.setVisible(false);
 
         final Reflection reflection = new Reflection();

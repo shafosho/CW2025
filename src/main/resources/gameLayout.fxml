@@ -28,7 +28,7 @@
                 <GridPane fx:id="nextBrickPanel" vgap="1" hgap="1" styleClass="previewBox"/>
             </VBox>
 
-            <BorderPane styleClass="gameBoard" fx:id="gameBoard" layoutX="50" layoutY="30">
+            <BorderPane styleClass="gameBoard" fx:id="gameBoard" layoutX="20" layoutY="30" prefWidth="224" prefHeight="500">
                 <center>
                     <StackPane>
                         <GridPane fx:id="shadowBrickPanel" vgap="1" hgap="1"/>
@@ -38,16 +38,14 @@
                             <Label text="PAUSED" styleClass="pausedText"/>
                             <Label text="Press P to Resume" styleClass="resumeText"/>
                         </VBox>
+
+                        <GameOverPanel fx:id="gameOverPanel" visible="false"/>
+
                     </StackPane>
                 </center>
             </BorderPane>
 
-            <Group fx:id="groupNotification" layoutX="65" layoutY="260">
-                <VBox alignment="CENTER">
-                    <GameOverPanel fx:id="gameOverPanel"/>
-                </VBox>
-            </Group>
-
+            <Group fx:id="groupNotification" layoutX="65" layoutY="260"/>
         </Pane>
     </Group>
 

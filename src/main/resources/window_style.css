@@ -30,7 +30,6 @@
     -fx-background-insets: 0, 1, 4, 5, 6;
     -fx-background-radius: 9, 8, 5, 4, 3;
     -fx-padding: 8;
-    /*-fx-font-family: "Helvetica";*/
     -fx-font-family: "Let's go Digital";
     -fx-font-size: 22px;
     -fx-font-weight: bold;
@@ -105,4 +104,15 @@
     -fx-font-size: 20px;
     -fx-fill: yellow;
     -fx-text-fill: yellow;
+}
+
+.menuButton {
+    -fx-font-family: "Let's go Digital";
+    -fx-font-size: 24px;
+    -fx-base: #2A5058;
+    -fx-text-fill: white;
+    -fx-cursor: hand;
+}
+.exitButton {
+    -fx-base: #8b0000;
 }
