@@ -71,6 +71,9 @@ public class GuiController implements Initializable {
     @FXML
     private VBox pauseMenu;
 
+    @FXML
+    private VBox instructionsPanel;
+
     private Rectangle[][] displayMatrix;
 
     private InputEventListener eventListener;
@@ -152,6 +155,9 @@ public class GuiController implements Initializable {
 
         pauseMenu.setVisible(false);
 
+        // Ensure instructions are shown when the scene loads
+        instructionsPanel.setVisible(true);
+
         final Reflection reflection = new Reflection();
         reflection.setFraction(0.8);
         reflection.setTopOpacity(0.9);
@@ -161,6 +167,13 @@ public class GuiController implements Initializable {
         initNextBrickView();
         // Initialize the Hold Brick preview grid
         initHoldBrickView();
+    }
+
+    @FXML
+    public void startGame(ActionEvent event) {
+        instructionsPanel.setVisible(false);
+        gamePanel.requestFocus(); // Give focus back to the game so keys work
+        timeLine.play(); // Start the game
     }
 
     /**
@@ -266,7 +279,6 @@ public class GuiController implements Initializable {
                 ae -> moveDown(new MoveEvent(EventType.DOWN, EventSource.THREAD))
         ));
         timeLine.setCycleCount(Timeline.INDEFINITE);
-        timeLine.play();
     }
 
     private Paint getFillColor(int i) {

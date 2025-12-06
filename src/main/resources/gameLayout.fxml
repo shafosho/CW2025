@@ -5,6 +5,7 @@
 <?import javafx.scene.Group?>
 <?import javafx.scene.layout.*?>
 <?import java.net.URL?>
+<?import javafx.scene.control.Button?>
 
 <StackPane fx:controller="com.comp2042.gui.GuiController"
            xmlns:fx="http://javafx.com/fxml">
@@ -52,6 +53,23 @@
                         </VBox>
 
                         <GameOverPanel fx:id="gameOverPanel" visible="false"/>
+
+                        <VBox fx:id="instructionsPanel" alignment="CENTER" spacing="20" styleClass="instructionPanel">
+
+                            <Label text="HOW TO PLAY" styleClass="instructionTitle"/>
+
+                            <VBox alignment="CENTER" spacing="10">
+                                <Label text="A / Left    : Move Left" styleClass="instructionItem"/>
+                                <Label text="D / Right   : Move Right" styleClass="instructionItem"/>
+                                <Label text="W / Up   : Rotate" styleClass="instructionItem"/>
+                                <Label text="S / Down   : Soft Drop" styleClass="instructionItem"/>
+                                <Label text="Space      : Hard Drop" styleClass="instructionItem"/>
+                                <Label text="P           : Pause     " styleClass="instructionItem"/>
+                                <Label text="N           : New Game" styleClass="instructionItem"/>
+                            </VBox>
+
+                            <Button text="READY!" onAction="#startGame" styleClass="readyButton"/>
+                        </VBox>
 
                     </StackPane>
                 </center>

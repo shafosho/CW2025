@@ -38,6 +38,37 @@
     -fx-border-width: 1px;
 }
 
+/* For Instructions Popup */
+.instructionPanel {
+    -fx-background-color: rgba(0, 0, 0, 0.98);
+    -fx-padding: 20;
+    -fx-alignment: center;
+}
+
+.instructionTitle {
+    -fx-font-family: "Let's go Digital";
+    -fx-text-fill: cyan;
+    -fx-font-size: 34px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
+}
+
+.instructionItem {
+    -fx-font-family: "Let's go Digital";
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+}
+
+.readyButton {
+    -fx-font-family: "Let's go Digital";
+    -fx-font-size: 24px;
+    -fx-base: green;
+    -fx-text-fill: white;
+    -fx-cursor: hand;
+    -fx-border-color: white;
+    -fx-border-width: 1px;
+    -fx-padding: 10 10 10 10;
+}
+
 /* For Controls Legend */
 .controlTitle {
     -fx-font-family: "Let's go Digital";
