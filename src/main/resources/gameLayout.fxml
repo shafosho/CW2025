@@ -33,11 +33,11 @@
 
                 <Label text="A / Left  : Move Left" styleClass="controlItem"/>
                 <Label text="D / Right : Move Right" styleClass="controlItem"/>
-                <Label text="W / Up    : Rotate" styleClass="controlItem"/>
+                <Label text="W / Up      : Rotate" styleClass="controlItem"/>
                 <Label text="S / Down  : Soft Drop" styleClass="controlItem"/>
-                <Label text="Space     : Hard Drop" styleClass="controlItem"/>
-                <Label text="P         : Pause" styleClass="controlItem"/>
-                <Label text="N         : New Game" styleClass="controlItem"/>
+                <Label text="Space      : Hard Drop" styleClass="controlItem"/>
+                <Label text="P              : Pause" styleClass="controlItem"/>
+                <Label text="N              : New Game" styleClass="controlItem"/>
             </VBox>
 
             <BorderPane styleClass="gameBoard" fx:id="gameBoard" layoutX="20" layoutY="30" prefWidth="224" prefHeight="500">
