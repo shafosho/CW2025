@@ -30,6 +30,8 @@ import javafx.util.Duration;
 import javafx.scene.control.TextInputDialog;
 import java.util.Optional;
 import javafx.application.Platform;
+import com.comp2042.data.ScoreEntry;
+import java.util.List;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -54,6 +56,9 @@ public class GuiController implements Initializable {
 
     @FXML
     private GameOverPanel gameOverPanel;
+
+    @FXML
+    private Label highScoreLabel;
 
     @FXML
     private Label scoreLabel;
@@ -167,6 +172,14 @@ public class GuiController implements Initializable {
         initNextBrickView();
         // Initialize the Hold Brick preview grid
         initHoldBrickView();
+
+        // Feature: Load High Score
+        List<ScoreEntry> topScores = new com.comp2042.gameLogic.HighScoreManager().getTopScores();
+        if (!topScores.isEmpty()) {
+            highScoreLabel.setText("TOP: " + topScores.get(0).getScore());
+        } else {
+            highScoreLabel.setText("TOP: 0");
+        }
     }
 
     @FXML
@@ -504,6 +517,15 @@ public class GuiController implements Initializable {
             ));
             timeLine.setCycleCount(Timeline.INDEFINITE);
             timeLine.play();
+        });
+
+        score.addListener((obs, oldVal, newVal) -> {
+            // Get current high score from label text
+            int currentTop = Integer.parseInt(highScoreLabel.getText().replace("TOP: ", ""));
+            if (newVal.intValue() > currentTop) {
+                highScoreLabel.setText("TOP: " + newVal);
+                highScoreLabel.setStyle("-fx-text-fill: orange; -fx-font-size: 24px;");
+            }
         });
     }
 

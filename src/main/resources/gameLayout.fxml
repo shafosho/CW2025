@@ -19,19 +19,24 @@
             <Label fx:id="levelLabel" layoutX="300" layoutY="100" text="Level: 1" styleClass="scoreClass"/>
             <Label fx:id="linesLabel" layoutX="300" layoutY="150" text="Lines Cleared: 0" styleClass="scoreClass"/>
 
-            <VBox layoutX="400" layoutY="200" spacing="10">
-                <Label text="HOLD" styleClass="scoreClass"/>
-                <GridPane fx:id="holdBrickPanel" vgap="1" hgap="1" styleClass="previewBox"/>
-            </VBox>
-
             <VBox layoutX="300" layoutY="200" spacing="10">
                 <Label text="NEXT" styleClass="scoreClass"/>
                 <GridPane fx:id="nextBrickPanel" vgap="1" hgap="1" styleClass="previewBox"/>
             </VBox>
 
-            <VBox layoutX="-150" layoutY="50" spacing="5">
-                <Label text="CONTROLS" styleClass="controlTitle"/>
+            <VBox layoutX="400" layoutY="200" spacing="10">
+                <Label text="HOLD" styleClass="scoreClass"/>
+                <GridPane fx:id="holdBrickPanel" vgap="1" hgap="1" styleClass="previewBox"/>
+            </VBox>
 
+            <Label fx:id="highScoreLabel"
+                   layoutX="-150" layoutY="60"
+                   text="TOP: 0"
+                   styleClass="scoreClass"
+                   style="-fx-text-fill: gold; -fx-font-size: 22px; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 5, 0, 0, 0);"/>
+
+            <VBox layoutX="-150" layoutY="100" spacing="5">
+                <Label text="CONTROLS" styleClass="controlTitle"/>
                 <Label text="A / Left  : Move Left" styleClass="controlItem"/>
                 <Label text="D / Right : Move Right" styleClass="controlItem"/>
                 <Label text="W / Up      : Rotate" styleClass="controlItem"/>
@@ -39,6 +44,9 @@
                 <Label text="Space      : Hard Drop" styleClass="controlItem"/>
                 <Label text="P              : Pause" styleClass="controlItem"/>
                 <Label text="N              : New Game" styleClass="controlItem"/>
+                <Button text="NEW GAME" onAction="#newGame"
+                        styleClass="scoreClass"
+                        style="-fx-font-size: 16px; -fx-base: #2A5058; -fx-text-fill: white; -fx-cursor: hand; -fx-border-color: white; -fx-border-width: 1px;"/>
             </VBox>
 
             <BorderPane styleClass="gameBoard" fx:id="gameBoard" layoutX="20" layoutY="30" prefWidth="224" prefHeight="500">
@@ -55,9 +63,7 @@
                         <GameOverPanel fx:id="gameOverPanel" visible="false"/>
 
                         <VBox fx:id="instructionsPanel" alignment="CENTER" spacing="20" styleClass="instructionPanel">
-
                             <Label text="HOW TO PLAY" styleClass="instructionTitle"/>
-
                             <VBox alignment="CENTER" spacing="10">
                                 <Label text="A / Left    : Move Left" styleClass="instructionItem"/>
                                 <Label text="D / Right   : Move Right" styleClass="instructionItem"/>
@@ -67,7 +73,6 @@
                                 <Label text="P           : Pause     " styleClass="instructionItem"/>
                                 <Label text="N           : New Game" styleClass="instructionItem"/>
                             </VBox>
-
                             <Button text="READY!" onAction="#startGame" styleClass="readyButton"/>
                         </VBox>
 
