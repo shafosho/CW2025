@@ -11,7 +11,7 @@ import java.net.URL;
 
 /**
  * The main entry point for the Tetris application.
- * Loads the FXML layout, and sets up the primary stage.
+ * Initializes the application window and loads the Start Menu.
  */
 public class Main extends Application {
 
@@ -21,24 +21,19 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        URL location = getClass().getClassLoader().getResource("gameLayout.fxml");
-
-        // Load the FXML file
+        // LOAD START MENU instead of gameLayout
+        URL location = getClass().getClassLoader().getResource("startMenuPage.fxml");
         FXMLLoader fxmlLoader = new FXMLLoader(location);
         Parent root = fxmlLoader.load();
 
-        // Get the controller to pass to the Game Logic
-        GuiController c = fxmlLoader.getController();
-
-        // Set up the window
         primaryStage.setTitle(APP_TITLE);
+        // Use the defined constants
         Scene scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
         primaryStage.setScene(scene);
-        primaryStage.centerOnScreen(); // Appear in the middle of monitor
+        primaryStage.centerOnScreen();
         primaryStage.show();
 
-        // Initialize the Game Logic
-        new GameController(c);
+        // MenuController will initialize GameController when the user clicks "Start".
     }
 
     public static void main(String[] args) {

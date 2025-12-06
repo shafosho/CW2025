@@ -1,0 +1,59 @@
+package com.comp2042.gui;
+
+import com.comp2042.gameLogic.GameController;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+import java.io.IOException;
+
+/**
+ * Controls the Start Menu logic.
+ * Handles navigation between the Menu, Game, and other screens.
+ */
+public class MenuController {
+
+    /**
+     * Starts the game by loading the main game layout.
+     * @param event The button click event (used to find the current stage)
+     */
+    @FXML
+    public void onStartGame(ActionEvent event) throws IOException {
+        // 1. Load the Game FXML
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("gameLayout.fxml"));
+        Parent root = fxmlLoader.load();
+
+        // 2. Initialize Logic
+        GuiController c = fxmlLoader.getController();
+        new GameController(c); // Connect logic to view
+
+        // 3. Get current stage and switch scene
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        Scene scene = new Scene(root, 600, 600);
+
+        stage.setTitle("Tetris - Playing");
+        stage.setScene(scene);
+        stage.centerOnScreen();
+        stage.show();
+    }
+
+    /**
+     * Placeholder for the High Scores screen.
+     */
+    @FXML
+    public void onHighScores(ActionEvent event) {
+        System.out.println("High Scores clicked! (Feature coming soon)");
+        // TODO: Implement high score scene switching here
+    }
+
+    /**
+     * Closes the application.
+     */
+    @FXML
+    public void onExit(ActionEvent event) {
+        System.exit(0);
+    }
+}
