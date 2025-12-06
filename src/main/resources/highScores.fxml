@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import java.net.URL?>
+
+<StackPane fx:controller="com.comp2042.gui.HighScoreController"
+           xmlns:fx="http://javafx.com/fxml"
+           prefWidth="600" prefHeight="600"
+           styleClass="root">
+
+    <VBox alignment="CENTER" spacing="20" style="-fx-background-color: rgba(0, 0, 0, 0.8); -fx-padding: 50; -fx-background-radius: 20; -fx-border-color: white; -fx-border-width: 2px; -fx-border-radius: 20;">
+
+        <Label text="HIGH SCORES" styleClass="highScoreTitle"/>
+
+        <VBox alignment="CENTER" spacing="15">
+            <Label fx:id="score1" text="1. ----" styleClass="scoreEntry"/>
+            <Label fx:id="score2" text="2. ----" styleClass="scoreEntry"/>
+            <Label fx:id="score3" text="3. ----" styleClass="scoreEntry"/>
+        </VBox>
+
+        <Button text="BACK" onAction="#onBack" styleClass="backButton"/>
+    </VBox>
+
+    <stylesheets>
+        <URL value="@window_style.css"/>
+    </stylesheets>
+</StackPane>

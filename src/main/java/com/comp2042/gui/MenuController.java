@@ -59,12 +59,33 @@ public class MenuController {
     }
 
     /**
-     * Placeholder for the High Scores screen.
+     * Switches to the High Scores screen.
      */
     @FXML
-    public void onHighScores(ActionEvent event) {
-        System.out.println("High Scores clicked! (Feature coming soon)");
-        // TODO: Implement high score scene switching here
+    public void onHighScores(ActionEvent event) throws IOException {
+        // 1. Load the High Scores FXML
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("highScores.fxml"));
+        Parent root = fxmlLoader.load();
+
+        // 2. Get current stage and dimensions
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        double currentWidth = stage.getWidth();
+        double currentHeight = stage.getHeight();
+        boolean isMaximized = stage.isMaximized();
+
+        // 3. Switch Scene
+        Scene scene = new Scene(root);
+        stage.setTitle("Tetris - High Scores");
+        stage.setScene(scene);
+
+        // 4. Restore Window State
+        if (isMaximized) {
+            stage.setMaximized(true);
+        } else {
+            stage.setWidth(currentWidth);
+            stage.setHeight(currentHeight);
+        }
+        stage.show();
     }
 
     /**

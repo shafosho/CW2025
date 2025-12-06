@@ -27,6 +27,9 @@ import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.util.Duration;
+import javafx.scene.control.TextInputDialog;
+import java.util.Optional;
+import javafx.application.Platform;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -485,6 +488,24 @@ public class GuiController implements Initializable {
         timeLine.stop();
         gameOverPanel.setVisible(true);
         isGameOver.setValue(Boolean.TRUE);
+
+        int finalScore = Integer.parseInt(scoreLabel.getText().replace("Score: ", ""));
+
+        if (finalScore > 0) {
+            // Wrap the dialog in Platform.runLater to avoid crashing the animation thread
+            Platform.runLater(() -> {
+                TextInputDialog dialog = new TextInputDialog("Player");
+                dialog.setTitle("New High Score");
+                dialog.setHeaderText("Congratulations!");
+                dialog.setContentText("Enter your name:");
+
+                Optional<String> result = dialog.showAndWait();
+                String name = result.orElse("Player");
+
+                new com.comp2042.gameLogic.HighScoreManager().addScore(name, finalScore);
+                System.out.println("Score saved: " + finalScore + " for " + name);
+            });
+        }
     }
 
     public void newGame(ActionEvent actionEvent) {
