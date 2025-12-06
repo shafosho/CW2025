@@ -38,6 +38,19 @@
     -fx-border-width: 1px;
 }
 
+/* For Controls Legend */
+.controlTitle {
+    -fx-font-family: "Let's go Digital";
+    -fx-text-fill: cyan;
+    -fx-font-size: 20px;
+}
+
+.controlItem {
+    -fx-font-family: "Let's go Digital";
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+}
+
 .nextBrickLabel {
     -fx-font-family: "Let's go Digital";
     -fx-padding: 20px 0 0 0;
