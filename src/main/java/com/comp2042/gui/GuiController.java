@@ -119,7 +119,18 @@ public class GuiController implements Initializable {
                         keyEvent.consume();
                     }
                     if (keyEvent.getCode() == KeyCode.SPACE) {
-                        refreshBrick(eventListener.onHardDropEvent(new MoveEvent(EventType.HARD_DROP, EventSource.USER)).getViewData());
+                        // 1. Capture the full data (Score + Visuals)
+                        DownData downData = eventListener.onHardDropEvent(new MoveEvent(EventType.HARD_DROP, EventSource.USER));
+
+                        // 2. Check for Score/Line Clears (Same logic as moveDown)
+                        if (downData.getClearRow() != null && downData.getClearRow().getLinesRemoved() > 0) {
+                            NotificationPanel notificationPanel = new NotificationPanel("+" + downData.getClearRow().getScoreBonus());
+                            groupNotification.getChildren().add(notificationPanel);
+                            notificationPanel.showScore(groupNotification.getChildren());
+                        }
+
+                        // 3. Refresh the board
+                        refreshBrick(downData.getViewData());
                         keyEvent.consume();
                     }
                     // Feature: Hold Brick on 'C' Key
