@@ -6,47 +6,52 @@
 <?import javafx.scene.layout.*?>
 <?import java.net.URL?>
 
-<Pane fx:controller="com.comp2042.gui.GuiController"
-      xmlns:fx="http://javafx.com/fxml">
+<StackPane fx:controller="com.comp2042.gui.GuiController"
+           xmlns:fx="http://javafx.com/fxml">
 
-    <GridPane fx:id="brickPanel" vgap="1" hgap="1"/>
+    <Group>
+        <Pane prefWidth="600" prefHeight="600">
 
-    <Label fx:id="scoreLabel" layoutX="350" layoutY="50" text="Score: 0" styleClass="scoreClass"/>
+            <GridPane fx:id="brickPanel" vgap="1" hgap="1"/>
 
-    <Label fx:id="levelLabel" layoutX="350" layoutY="100" text="Level: 1" styleClass="scoreClass"/>
-    <Label fx:id="linesLabel" layoutX="350" layoutY="150" text="Lines Cleared: 0" styleClass="scoreClass"/>
+            <Label fx:id="scoreLabel" layoutX="300" layoutY="50" text="Score: 0" styleClass="scoreClass"/>
+            <Label fx:id="levelLabel" layoutX="300" layoutY="100" text="Level: 1" styleClass="scoreClass"/>
+            <Label fx:id="linesLabel" layoutX="300" layoutY="150" text="Lines Cleared: 0" styleClass="scoreClass"/>
 
-    <VBox layoutX="450" layoutY="200" spacing="10">
-        <Label text="HOLD" styleClass="scoreClass"/>
-        <GridPane fx:id="holdBrickPanel" vgap="1" hgap="1" styleClass="previewBox"/>
-    </VBox>
+            <VBox layoutX="400" layoutY="200" spacing="10">
+                <Label text="HOLD" styleClass="scoreClass"/>
+                <GridPane fx:id="holdBrickPanel" vgap="1" hgap="1" styleClass="previewBox"/>
+            </VBox>
 
-    <VBox layoutX="350" layoutY="200" spacing="10">
-        <Label text="NEXT" styleClass="scoreClass"/>
-        <GridPane fx:id="nextBrickPanel" vgap="1" hgap="1" styleClass="previewBox"/>
-    </VBox>
+            <VBox layoutX="300" layoutY="200" spacing="10">
+                <Label text="NEXT" styleClass="scoreClass"/>
+                <GridPane fx:id="nextBrickPanel" vgap="1" hgap="1" styleClass="previewBox"/>
+            </VBox>
 
-    <BorderPane styleClass="gameBoard" fx:id="gameBoard" layoutX="50" layoutY="30">
-        <center>
-            <StackPane>
-                <GridPane fx:id="shadowBrickPanel" vgap="1" hgap="1"/>
-                <GridPane fx:id="gamePanel" hgap="1" vgap="1"/>
+            <BorderPane styleClass="gameBoard" fx:id="gameBoard" layoutX="50" layoutY="30">
+                <center>
+                    <StackPane>
+                        <GridPane fx:id="shadowBrickPanel" vgap="1" hgap="1"/>
+                        <GridPane fx:id="gamePanel" hgap="1" vgap="1"/>
 
-                <VBox fx:id="pauseMenu" visible="false" alignment="CENTER" styleClass="pauseMenu">
-                    <Label text="PAUSED" styleClass="pausedText"/>
-                    <Label text="Press P to Resume" styleClass="resumeText"/>
+                        <VBox fx:id="pauseMenu" visible="false" alignment="CENTER" styleClass="pauseMenu">
+                            <Label text="PAUSED" styleClass="pausedText"/>
+                            <Label text="Press P to Resume" styleClass="resumeText"/>
+                        </VBox>
+                    </StackPane>
+                </center>
+            </BorderPane>
+
+            <Group fx:id="groupNotification" layoutX="65" layoutY="260">
+                <VBox alignment="CENTER">
+                    <GameOverPanel fx:id="gameOverPanel"/>
                 </VBox>
-            </StackPane>
-        </center>
-    </BorderPane>
+            </Group>
 
-    <Group fx:id="groupNotification" layoutX="65" layoutY="260">
-        <VBox alignment="CENTER">
-            <GameOverPanel fx:id="gameOverPanel"/>
-        </VBox>
+        </Pane>
     </Group>
 
     <stylesheets>
         <URL value="@window_style.css"/>
     </stylesheets>
-</Pane>
+</StackPane>
