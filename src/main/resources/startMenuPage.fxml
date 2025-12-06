@@ -16,13 +16,13 @@
         <Label text="TETRIS" styleClass="gameOverStyle" style="-fx-font-size: 80px; -fx-text-fill: cyan; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);"/>
 
         <Button text="START GAME" onAction="#onStartGame"
-                style="-fx-font-family: 'Let\'s go Digital'; -fx-font-size: 24px; -fx-base: #2A5058; -fx-text-fill: white; -fx-cursor: hand;"/>
+                styleClass="menuButton"/>
 
         <Button text="HIGH SCORES" onAction="#onHighScores"
-                style="-fx-font-family: 'Let\'s go Digital'; -fx-font-size: 24px; -fx-base: #2A5058; -fx-text-fill: white; -fx-cursor: hand;"/>
+                styleClass="menuButton"/>
 
         <Button text="EXIT" onAction="#onExit"
-                style="-fx-font-family: 'Let\'s go Digital'; -fx-font-size: 24px; -fx-base: #8b0000; -fx-text-fill: white; -fx-cursor: hand;"/>
+                styleClass="menuButton"/>
     </VBox>
 
     <stylesheets>

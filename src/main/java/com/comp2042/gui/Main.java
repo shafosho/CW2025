@@ -15,8 +15,8 @@ import java.net.URL;
  */
 public class Main extends Application {
 
-    private static final int WINDOW_WIDTH = 650;
-    private static final int WINDOW_HEIGHT = 650;
+    private static final int WINDOW_WIDTH = 600;
+    private static final int WINDOW_HEIGHT = 600;
     private static final String APP_TITLE = "TetrisJFX";
 
     @Override

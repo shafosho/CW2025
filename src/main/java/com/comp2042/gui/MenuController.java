@@ -28,15 +28,33 @@ public class MenuController {
 
         // 2. Initialize Logic
         GuiController c = fxmlLoader.getController();
-        new GameController(c); // Connect logic to view
+        new GameController(c);
 
-        // 3. Get current stage and switch scene
+        // 3. Get current stage and Preserve Window State
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        Scene scene = new Scene(root, 600, 600);
+        double currentWidth = stage.getWidth();
+        double currentHeight = stage.getHeight();
+        boolean isMaximized = stage.isMaximized();
+
+        // 4. Switch Scene
+        Scene scene = new Scene(root);
 
         stage.setTitle("Tetris - Playing");
         stage.setScene(scene);
-        stage.centerOnScreen();
+
+        // 5. Restore Window State (Prevent shrinking)
+        if (isMaximized) {
+            stage.setMaximized(true);
+        } else {
+            stage.setWidth(currentWidth);
+            stage.setHeight(currentHeight);
+        }
+
+        // Only center if NOT maximized and just starting standard size
+        if (!isMaximized && currentWidth == 600 && currentHeight == 600) {
+            stage.centerOnScreen();
+        }
+
         stage.show();
     }
 
