@@ -58,6 +58,7 @@
                 <Label text="W / Up      : Rotate" styleClass="controlItem"/>
                 <Label text="S / Down  : Soft Drop" styleClass="controlItem"/>
                 <Label text="Space      : Hard Drop" styleClass="controlItem"/>
+                <Label text="C              : Hold" styleClass="controlItem"/>
                 <Label text="P              : Pause" styleClass="controlItem"/>
                 <Label text="N              : New Game" styleClass="controlItem"/>
             </VBox>
@@ -91,6 +92,7 @@
             <Label text="W / Up        : Rotate     " styleClass="instructionItem"/>
             <Label text="S / Down   : Soft Drop" styleClass="instructionItem"/>
             <Label text="Space      : Hard Drop" styleClass="instructionItem"/>
+            <Label text="C            : Hold       " styleClass="instructionItem"/>
             <Label text="P           : Pause     " styleClass="instructionItem"/>
             <Label text="N           : New Game" styleClass="instructionItem"/>
         </VBox>
