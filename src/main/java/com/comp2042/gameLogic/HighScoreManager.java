@@ -22,8 +22,9 @@ public class HighScoreManager {
     public void addScore(String name, int score) {
         scores.add(new ScoreEntry(name, score));
         Collections.sort(scores);
-        // Keep only top 5
-        if (scores.size() > 5) {
+
+        // Changed to Top 3 (was 5)
+        if (scores.size() > 3) {
             scores.remove(scores.size() - 1);
         }
         saveScores();
@@ -31,6 +32,28 @@ public class HighScoreManager {
 
     public List<ScoreEntry> getTopScores() {
         return scores;
+    }
+
+    /**
+     * Checks if a score qualifies for the top 3 list.
+     * Used to decide whether to prompt the user for their name.
+     * @param newScore The score to check
+     * @return true if the score belongs in the top list, false otherwise.
+     */
+    public boolean canEnterHighScore(int newScore) {
+        // Condition 1: Score must be greater than 0
+        if (newScore <= 0) {
+            return false;
+        }
+
+        // Condition 2: If we have fewer than 3 scores, any score > 0 qualifies
+        if (scores.size() < 3) {
+            return true;
+        }
+
+        // Condition 3: Compare against the lowest score in the list (the last one)
+        ScoreEntry lowestEntry = scores.get(scores.size() - 1);
+        return newScore > lowestEntry.getScore();
     }
 
     private void saveScores() {

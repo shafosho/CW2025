@@ -31,6 +31,7 @@ import javafx.scene.control.TextInputDialog;
 import java.util.Optional;
 import javafx.application.Platform;
 import com.comp2042.data.ScoreEntry;
+import com.comp2042.gameLogic.HighScoreManager; // Added explicit import
 import java.util.List;
 
 import java.net.URL;
@@ -491,6 +492,7 @@ public class GuiController implements Initializable {
         });
     }
 
+    // Feature: Only show congratulations dialog if the score is actually a high score (Top 3)
     public void gameOver() {
         timeLine.stop();
         gameOverPanel.setVisible(true);
@@ -498,7 +500,10 @@ public class GuiController implements Initializable {
 
         int finalScore = Integer.parseInt(scoreLabel.getText().replace("Score: ", ""));
 
-        if (finalScore > 0) {
+        // Use the new helper method in HighScoreManager to check if the score qualifies
+        HighScoreManager manager = new HighScoreManager();
+
+        if (manager.canEnterHighScore(finalScore)) {
             // Wrap the dialog in Platform.runLater to avoid crashing the animation thread
             Platform.runLater(() -> {
                 TextInputDialog dialog = new TextInputDialog("Player");
@@ -509,7 +514,7 @@ public class GuiController implements Initializable {
                 Optional<String> result = dialog.showAndWait();
                 String name = result.orElse("Player");
 
-                new com.comp2042.gameLogic.HighScoreManager().addScore(name, finalScore);
+                manager.addScore(name, finalScore);
                 System.out.println("Score saved: " + finalScore + " for " + name);
             });
         }
