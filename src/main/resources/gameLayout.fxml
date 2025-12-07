@@ -35,13 +35,23 @@
                 <GridPane fx:id="holdBrickPanel" vgap="1" hgap="1" styleClass="previewBox"/>
             </VBox>
 
-            <Label fx:id="highScoreLabel"
-                   layoutX="-140" layoutY="60"
-                   text="TOP: 0"
-                   styleClass="scoreClass"
-                   style="-fx-text-fill: gold; -fx-font-size: 30px; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 5, 0, 0, 0);"/>
+            <VBox layoutX="-140" layoutY="60" spacing="10" alignment="TOP_CENTER" prefWidth="150">
+                <Label fx:id="highScoreLabel"
+                       text="TOP: 0"
+                       styleClass="highScoreValue"/>
 
-            <VBox layoutX="-140" layoutY="100" spacing="5">
+                <Label fx:id="highScoreNameLabel"
+                       text=""
+                       styleClass="highScoreName"/>
+
+                <Button text="NEW GAME" onAction="#newGame"
+                        styleClass="newGameButton">
+                    <VBox.margin>
+                        <Insets top="15"/> </VBox.margin>
+                </Button>
+            </VBox>
+
+            <VBox layoutX="-125" layoutY="200" spacing="5">
                 <Label text="CONTROLS" styleClass="controlTitle"/>
                 <Label text="A / Left  : Move Left" styleClass="controlItem"/>
                 <Label text="D / Right : Move Right" styleClass="controlItem"/>
@@ -50,16 +60,6 @@
                 <Label text="Space      : Hard Drop" styleClass="controlItem"/>
                 <Label text="P              : Pause" styleClass="controlItem"/>
                 <Label text="N              : New Game" styleClass="controlItem"/>
-
-                <Button text="NEW GAME" onAction="#newGame"
-                        styleClass="scoreClass"
-                        style="-fx-font-size: 16px; -fx-base: #2A5058; -fx-text-fill: white; -fx-cursor: hand; -fx-border-color: white; -fx-border-width: 1px;">
-
-                    <VBox.margin>
-                        <Insets top="10" left="15"/>
-                    </VBox.margin>
-
-                </Button>
             </VBox>
 
             <BorderPane styleClass="gameBoard" fx:id="gameBoard" layoutX="20" layoutY="30" prefWidth="224" prefHeight="500">

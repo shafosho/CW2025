@@ -69,6 +69,31 @@
     -fx-padding: 10 10 10 10;
 }
 
+/* Top Score + Scorer */
+.highScoreValue {
+    -fx-font-family: "Let's go Digital";
+    -fx-text-fill: gold;
+    -fx-font-size: 30px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 5, 0, 0, 0);
+}
+
+.highScoreName {
+    -fx-font-family: "Let's go Digital";
+    -fx-text-fill: gold;
+    -fx-font-size: 20px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 5, 0, 0, 0);
+}
+
+.newGameButton {
+    -fx-font-family: "Let's go Digital";
+    -fx-font-size: 16px;
+    -fx-base: #2A5058;
+    -fx-text-fill: white;
+    -fx-cursor: hand;
+    -fx-border-color: white;
+    -fx-border-width: 1px;
+}
+
 /* For Controls Legend */
 .controlTitle {
     -fx-font-family: "Let's go Digital";

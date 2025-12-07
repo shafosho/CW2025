@@ -42,30 +42,16 @@ public class GuiController implements Initializable {
     private static final int BOARD_OFFSET_X = 32; // Matches FXML gameBoard layoutX
     private static final int BOARD_OFFSET_Y = 42; // Matches FXML gameBoard layoutY
 
-    @FXML
-    private GridPane gamePanel;
-
-    @FXML
-    private Group groupNotification;
-
-    @FXML
-    private GridPane brickPanel;
-
-    @FXML
-    private GridPane shadowBrickPanel; // Shadow Grid
-
-    @FXML
-    private GameOverPanel gameOverPanel;
-
-    @FXML
-    private Label highScoreLabel;
-
-    @FXML
-    private Label scoreLabel;
-    @FXML
-    private Label levelLabel;
-    @FXML
-    private Label linesLabel;
+    @FXML private GridPane gamePanel;
+    @FXML private Group groupNotification;
+    @FXML private GridPane brickPanel;
+    @FXML private GridPane shadowBrickPanel; // Shadow Grid
+    @FXML private GameOverPanel gameOverPanel;
+    @FXML private Label highScoreLabel;
+    @FXML private Label highScoreNameLabel;
+    @FXML private Label scoreLabel;
+    @FXML private Label levelLabel;
+    @FXML private Label linesLabel;
 
     // Feature: Updated for 3-Brick Preview
     @FXML private GridPane nextBrick1;
@@ -74,28 +60,22 @@ public class GuiController implements Initializable {
     private GridPane[] nextBrickGrids; // Array to hold them for easy looping
     private Rectangle[][][] nextBrickRectangles; // 3D array: [WhichBrick][Row][Col]
 
-    @FXML
-    private GridPane holdBrickPanel; // The Hold Piece Grid
-
-    @FXML
-    private VBox pauseMenu;
-
-    @FXML
-    private VBox instructionsPanel;
+    @FXML private GridPane holdBrickPanel; // The Hold Piece Grid
+    @FXML private VBox pauseMenu;
+    @FXML private VBox instructionsPanel;
 
     private Rectangle[][] displayMatrix;
-
     private InputEventListener eventListener;
-
     private Rectangle[][] rectangles;
     private Rectangle[][] shadowRectangles; // The rectangles for the shadow
     private Rectangle[][] holdBrickRectangles; // The rectangles for hold display
 
     private Timeline timeLine;
-
     private final BooleanProperty isPause = new SimpleBooleanProperty();
-
     private final BooleanProperty isGameOver = new SimpleBooleanProperty();
+
+    // Feature: Track high score numerically to avoid parsing errors with names
+    private int currentHighScore = 0;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -177,12 +157,19 @@ public class GuiController implements Initializable {
         // Initialize the Hold Brick preview grid
         initHoldBrickView();
 
-        // Feature: Load High Score
+        // Feature: Load High Score AND Name
         List<ScoreEntry> topScores = new com.comp2042.gameLogic.HighScoreManager().getTopScores();
         if (!topScores.isEmpty()) {
-            highScoreLabel.setText("TOP: " + topScores.get(0).getScore());
+            ScoreEntry topEntry = topScores.get(0);
+            currentHighScore = topEntry.getScore();
+            // Set Score
+            highScoreLabel.setText("TOP: " + currentHighScore);
+            // Set Name on the second line
+            highScoreNameLabel.setText("(" + topEntry.getName() + ")");
         } else {
+            currentHighScore = 0;
             highScoreLabel.setText("TOP: 0");
+            highScoreNameLabel.setText(""); // Clear name
         }
     }
 
@@ -495,11 +482,11 @@ public class GuiController implements Initializable {
         });
 
         score.addListener((obs, oldVal, newVal) -> {
-            // Get current high score from label text
-            int currentTop = Integer.parseInt(highScoreLabel.getText().replace("TOP: ", ""));
-            if (newVal.intValue() > currentTop) {
+            if (newVal.intValue() > currentHighScore) {
                 highScoreLabel.setText("TOP: " + newVal);
+                highScoreNameLabel.setText("(YOU!)"); // Update the name label
                 highScoreLabel.setStyle("-fx-text-fill: orange; -fx-font-size: 24px;");
+                highScoreNameLabel.setStyle("-fx-text-fill: orange; -fx-font-size: 20px;");
             }
         });
     }
