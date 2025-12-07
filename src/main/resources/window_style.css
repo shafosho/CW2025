@@ -16,7 +16,7 @@
 
 /* For High Score */
 .highScoreTitle {
-    -fx-font-family: "Let's go Digital"; /* No escaping needed here! */
+    -fx-font-family: "Let's go Digital";
     -fx-font-size: 80px;
     -fx-text-fill: cyan;
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
@@ -73,7 +73,7 @@
 .controlTitle {
     -fx-font-family: "Let's go Digital";
     -fx-text-fill: cyan;
-    -fx-font-size: 20px;
+    -fx-font-size: 30px;
 }
 
 .controlItem {
@@ -85,7 +85,7 @@
 .nextBrickLabel {
     -fx-font-family: "Let's go Digital";
     -fx-padding: 20px 0 0 0;
-    -fx-font-size: 16px;
+    -fx-font-size: 30px;
     -fx-text-fill: yellow;
 }
 
@@ -133,7 +133,7 @@
 
 .scoreClass{
     -fx-font-family: "Let's go Digital";
-    -fx-font-size: 38;
+    -fx-font-size: 30;
     -fx-fill: yellow;
     -fx-text-fill: yellow;
 }
