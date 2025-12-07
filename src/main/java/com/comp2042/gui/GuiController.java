@@ -67,8 +67,12 @@ public class GuiController implements Initializable {
     @FXML
     private Label linesLabel;
 
-    @FXML
-    private GridPane nextBrickPanel; // The Next Piece Grid
+    // Feature: Updated for 3-Brick Preview
+    @FXML private GridPane nextBrick1;
+    @FXML private GridPane nextBrick2;
+    @FXML private GridPane nextBrick3;
+    private GridPane[] nextBrickGrids; // Array to hold them for easy looping
+    private Rectangle[][][] nextBrickRectangles; // 3D array: [WhichBrick][Row][Col]
 
     @FXML
     private GridPane holdBrickPanel; // The Hold Piece Grid
@@ -85,7 +89,6 @@ public class GuiController implements Initializable {
 
     private Rectangle[][] rectangles;
     private Rectangle[][] shadowRectangles; // The rectangles for the shadow
-    private Rectangle[][] nextBrickRectangles; // The rectangles for the preview
     private Rectangle[][] holdBrickRectangles; // The rectangles for hold display
 
     private Timeline timeLine;
@@ -168,7 +171,8 @@ public class GuiController implements Initializable {
         reflection.setTopOpacity(0.9);
         reflection.setTopOffset(-12);
 
-        // Feature: Initialize the Next Brick preview grid
+        // Feature: Initialize the Next Brick preview grid (UPDATED for 3)
+        nextBrickGrids = new GridPane[]{nextBrick1, nextBrick2, nextBrick3};
         initNextBrickView();
         // Initialize the Hold Brick preview grid
         initHoldBrickView();
@@ -193,18 +197,21 @@ public class GuiController implements Initializable {
      * Creates the 4x4 grid of empty rectangles for the Next Piece preview.
      */
     private void initNextBrickView() {
-        nextBrickRectangles = new Rectangle[4][4];
-        for (int i = 0; i < 4; i++) {
-            for (int j = 0; j < 4; j++) {
-                Rectangle rectangle = new Rectangle(BRICK_SIZE, BRICK_SIZE);
-                rectangle.setFill(Color.TRANSPARENT);
+        nextBrickRectangles = new Rectangle[3][4][4]; // 3 bricks, 4x4 each
 
-                // Fix: Add rounded corners to match the main game style
-                rectangle.setArcWidth(9);
-                rectangle.setArcHeight(9);
+        for (int k = 0; k < 3; k++) { // Loop through the 3 grids
+            for (int i = 0; i < 4; i++) {
+                for (int j = 0; j < 4; j++) {
+                    Rectangle rectangle = new Rectangle(BRICK_SIZE, BRICK_SIZE);
+                    rectangle.setFill(Color.TRANSPARENT);
 
-                nextBrickRectangles[i][j] = rectangle;
-                nextBrickPanel.add(rectangle, j, i);
+                    // Fix: Add rounded corners to match the main game style
+                    rectangle.setArcWidth(9);
+                    rectangle.setArcHeight(9);
+
+                    nextBrickRectangles[k][i][j] = rectangle;
+                    nextBrickGrids[k].add(rectangle, j, i);
+                }
             }
         }
     }
@@ -292,6 +299,63 @@ public class GuiController implements Initializable {
                 ae -> moveDown(new MoveEvent(EventType.DOWN, EventSource.THREAD))
         ));
         timeLine.setCycleCount(Timeline.INDEFINITE);
+    } // END of initGameView - METHOD CLOSES HERE
+
+    // --- FIX: Method is now properly outside ---
+    /**
+     * Updates the visuals for the Next Brick preview panel with centering logic.
+     */
+    private void refreshNextBrick(ViewData brick) {
+        List<int[][]> nextDataList = brick.getNextBrickData();
+
+        // Loop through up to 3 bricks (or however many are sent)
+        for (int k = 0; k < nextBrickRectangles.length; k++) {
+
+            // 1. Clear grid
+            for (int i = 0; i < 4; i++) {
+                for (int j = 0; j < 4; j++) {
+                    nextBrickRectangles[k][i][j].setFill(Color.TRANSPARENT);
+                }
+            }
+
+            // Safety: If data has fewer than 3 bricks, stop
+            if (k >= nextDataList.size()) continue;
+
+            int[][] nextData = nextDataList.get(k);
+
+            // 2. Find bounds for centering (Same logic as before, just inside loop)
+            int minRow = 4, maxRow = 0, minCol = 4, maxCol = 0;
+            boolean hasBlock = false;
+            for (int i = 0; i < nextData.length; i++) {
+                for (int j = 0; j < nextData[i].length; j++) {
+                    if (nextData[i][j] != 0) {
+                        if (i < minRow) minRow = i;
+                        if (i > maxRow) maxRow = i;
+                        if (j < minCol) minCol = j;
+                        if (j > maxCol) maxCol = j;
+                        hasBlock = true;
+                    }
+                }
+            }
+
+            if (!hasBlock) continue;
+
+            int pieceHeight = maxRow - minRow + 1;
+            int pieceWidth = maxCol - minCol + 1;
+            int startRow = (4 - pieceHeight) / 2;
+            int startCol = (4 - pieceWidth) / 2;
+
+            // 3. Draw
+            for (int i = minRow; i <= maxRow; i++) {
+                for (int j = minCol; j <= maxCol; j++) {
+                    if (nextData[i][j] != 0) {
+                        int targetRow = startRow + (i - minRow);
+                        int targetCol = startCol + (j - minCol);
+                        nextBrickRectangles[k][targetRow][targetCol].setFill(getFillColor(nextData[i][j]));
+                    }
+                }
+            }
+        }
     }
 
     private Paint getFillColor(int i) {
@@ -358,62 +422,6 @@ public class GuiController implements Initializable {
                         shadowRectangles[targetY][targetX].setOpacity(0.3);
                         shadowRectangles[targetY][targetX].setArcWidth(9);
                         shadowRectangles[targetY][targetX].setArcHeight(9);
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * Updates the visuals for the Next Brick preview panel with centering logic.
-     */
-    private void refreshNextBrick(ViewData brick) {
-        int[][] nextData = brick.getNextBrickData();
-
-        // 1. Clear previous state
-        for (int i = 0; i < 4; i++) {
-            for (int j = 0; j < 4; j++) {
-                nextBrickRectangles[i][j].setFill(Color.TRANSPARENT);
-            }
-        }
-
-        // 2. Find the actual bounds of the piece (min/max X and Y)
-        int minRow = 4, maxRow = 0, minCol = 4, maxCol = 0;
-        boolean hasBlock = false;
-
-        for (int i = 0; i < nextData.length; i++) {
-            for (int j = 0; j < nextData[i].length; j++) {
-                if (nextData[i][j] != 0) {
-                    if (i < minRow) minRow = i;
-                    if (i > maxRow) maxRow = i;
-                    if (j < minCol) minCol = j;
-                    if (j > maxCol) maxCol = j;
-                    hasBlock = true;
-                }
-            }
-        }
-
-        if (!hasBlock) return; // Should not happen
-
-        // 3. Calculate piece dimensions
-        int pieceHeight = maxRow - minRow + 1;
-        int pieceWidth = maxCol - minCol + 1;
-
-        // 4. Calculate centering offset (Integers truncate, so this is approximate but better)
-        int startRow = (4 - pieceHeight) / 2;
-        int startCol = (4 - pieceWidth) / 2;
-
-        // 5. Draw the piece with the offset applied
-        for (int i = minRow; i <= maxRow; i++) {
-            for (int j = minCol; j <= maxCol; j++) {
-                if (nextData[i][j] != 0) {
-                    // Map local piece coordinates (i, j) to the centered grid coordinates
-                    int targetRow = startRow + (i - minRow);
-                    int targetCol = startCol + (j - minCol);
-
-                    // Safety check to ensure we stay within the 4x4 grid
-                    if (targetRow >= 0 && targetRow < 4 && targetCol >= 0 && targetCol < 4) {
-                        nextBrickRectangles[targetRow][targetCol].setFill(getFillColor(nextData[i][j]));
                     }
                 }
             }

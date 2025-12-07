@@ -8,6 +8,10 @@ import com.comp2042.logic.bricks.BrickGenerator;
 import com.comp2042.logic.bricks.RandomBrickGenerator;
 
 import java.awt.*;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.List;
 
 /**
  * Handles the game logic, the grid, and the falling bricks.
@@ -30,6 +34,9 @@ public class SimpleBoard implements Board {
     private Brick holdBrick;
     private boolean canHold = true; // Can only hold once per turn
 
+    // Feature: Preview Queue (3 Bricks)
+    private final Deque<Brick> nextBricks;
+
     /**
      * Creates the board with a specific height and width.
      * @param rows The height of the board (number of rows)
@@ -42,6 +49,12 @@ public class SimpleBoard implements Board {
         brickGenerator = new RandomBrickGenerator();
         currentBrick = new CurrentBrick();
         score = new Score();
+
+        // Initialize the queue with 3 random bricks
+        nextBricks = new ArrayDeque<>();
+        for (int i = 0; i < 3; i++) {
+            nextBricks.add(brickGenerator.getBrick());
+        }
     }
 
     /**
@@ -121,7 +134,13 @@ public class SimpleBoard implements Board {
      */
     @Override
     public boolean createNewBrick() {
-        Brick nextBrick = brickGenerator.getBrick();
+        // 1. Get the next brick from the front of the queue
+        Brick nextBrick = nextBricks.poll();
+
+        // 2. Add a NEW random brick to the end of the queue (keeping size at 3)
+        nextBricks.add(brickGenerator.getBrick());
+
+        // 3. Set current brick
         currentBrick.setBrick(nextBrick);
 
         // Refactor: Use constants instead of magic numbers
@@ -140,11 +159,18 @@ public class SimpleBoard implements Board {
     @Override
     public ViewData getViewData() {
         int[][] holdShape = (holdBrick == null) ? null : holdBrick.getShapeMatrix().get(0);
+
+        // Feature: Convert the Queue of Bricks into a List of Shapes (int[][]) for the view
+        List<int[][]> nextShapes = new ArrayList<>();
+        for (Brick b : nextBricks) {
+            nextShapes.add(b.getShapeMatrix().get(0));
+        }
+
         return new ViewData(
                 currentBrick.getCurrentShape(),
                 (int) currentOffset.getX(),
                 (int) currentOffset.getY(),
-                brickGenerator.getNextBrick().getShapeMatrix().get(0),
+                nextShapes, // Feature: Pass the list of 3 shapes!
                 holdShape, // Feature: Pass hold data to view
                 getShadowY() // Feature: Pass the calculated shadow Y position
         );
@@ -216,6 +242,13 @@ public class SimpleBoard implements Board {
         currentGameMatrix = new int[rows][cols];
         score.reset();
         holdBrick = null; // Feature: Reset hold
+
+        // Reset the queue for a fresh game
+        nextBricks.clear();
+        for (int i = 0; i < 3; i++) {
+            nextBricks.add(brickGenerator.getBrick());
+        }
+
         createNewBrick();
     }
 }

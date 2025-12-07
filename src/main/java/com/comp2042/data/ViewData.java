@@ -1,6 +1,8 @@
 package com.comp2042.data;
 
 import com.comp2042.gameLogic.MatrixOperations;
+import java.util.ArrayList; // Added missing import
+import java.util.List;      // Added missing import
 
 /**
  * An immutable data object containing the state of the board and the moving piece.
@@ -11,9 +13,9 @@ public final class ViewData {
     private final int[][] brickData;
     private final int xPosition;
     private final int yPosition;
-    private final int[][] nextBrickData;
+    private final List<int[][]> nextBrickData;
     private final int[][] holdBrickData;
-    private final int shadowY; // New: Y position of the shadow
+    private final int shadowY; // Y position of the shadow
 
     /**
      * Creates a snapshot of the current game view.
@@ -23,7 +25,8 @@ public final class ViewData {
      * @param nextBrickData The shape of the next upcoming brick
      * @param holdBrickData The shape of the held block
      */
-    public ViewData(int[][] brickData, int xPosition, int yPosition, int[][] nextBrickData, int[][] holdBrickData, int shadowY) {
+    // FIXED: Updated parameter type to List<int[][]>
+    public ViewData(int[][] brickData, int xPosition, int yPosition, List<int[][]> nextBrickData, int[][] holdBrickData, int shadowY) {
         this.brickData = brickData;
         this.xPosition = xPosition;
         this.yPosition = yPosition;
@@ -44,8 +47,13 @@ public final class ViewData {
         return yPosition;
     }
 
-    public int[][] getNextBrickData() {
-        return MatrixOperations.copy(nextBrickData);
+    // Return the list
+    public List<int[][]> getNextBrickData() {
+        List<int[][]> copy = new ArrayList<>();
+        for (int[][] matrix : nextBrickData) {
+            copy.add(MatrixOperations.copy(matrix));
+        }
+        return copy;
     }
 
     public int[][] getHoldBrickData() {

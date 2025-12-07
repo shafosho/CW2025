@@ -22,7 +22,12 @@
 
             <VBox layoutX="300" layoutY="200" spacing="10">
                 <Label text="NEXT" styleClass="scoreClass"/>
-                <GridPane fx:id="nextBrickPanel" vgap="1" hgap="1" styleClass="previewBox"/>
+
+                <VBox fx:id="nextQueueContainer" spacing="5" styleClass="previewBox">
+                    <GridPane fx:id="nextBrick1" vgap="1" hgap="1"/>
+                    <GridPane fx:id="nextBrick2" vgap="1" hgap="1"/>
+                    <GridPane fx:id="nextBrick3" vgap="1" hgap="1"/>
+                </VBox>
             </VBox>
 
             <VBox layoutX="400" layoutY="200" spacing="10">
