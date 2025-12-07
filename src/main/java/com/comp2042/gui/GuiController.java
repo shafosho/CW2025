@@ -299,11 +299,11 @@ public class GuiController implements Initializable {
                 ae -> moveDown(new MoveEvent(EventType.DOWN, EventSource.THREAD))
         ));
         timeLine.setCycleCount(Timeline.INDEFINITE);
-    } // END of initGameView - METHOD CLOSES HERE
+    }
 
-    // --- FIX: Method is now properly outside ---
     /**
      * Updates the visuals for the Next Brick preview panel with centering logic.
+     * Updated to handle a Queue of 3 Bricks.
      */
     private void refreshNextBrick(ViewData brick) {
         List<int[][]> nextDataList = brick.getNextBrickData();
@@ -358,76 +358,6 @@ public class GuiController implements Initializable {
         }
     }
 
-    private Paint getFillColor(int i) {
-        switch (i) {
-            case 0: return Color.TRANSPARENT;
-            case 1: return Color.AQUA;
-            case 2: return Color.BLUEVIOLET;
-            case 3: return Color.DARKGREEN;
-            case 4: return Color.YELLOW;
-            case 5: return Color.RED;
-            case 6: return Color.BEIGE;
-            case 7: return Color.BURLYWOOD;
-            default: return Color.WHITE;
-        }
-    }
-
-    private void refreshBrick(ViewData brick) {
-        if (isPause.getValue() == Boolean.FALSE) {
-            // Apply Offset
-            brickPanel.setLayoutX(gamePanel.getLayoutX() + BOARD_OFFSET_X + brick.getxPosition() * brickPanel.getVgap() + brick.getxPosition() * BRICK_SIZE);
-            brickPanel.setLayoutY(-42 + gamePanel.getLayoutY() + BOARD_OFFSET_Y + brick.getyPosition() * brickPanel.getHgap() + brick.getyPosition() * BRICK_SIZE);
-            for (int i = 0; i < brick.getBrickData().length; i++) {
-                for (int j = 0; j < brick.getBrickData()[i].length; j++) {
-                    setRectangleData(brick.getBrickData()[i][j], rectangles[i][j]);
-                }
-            }
-            // Feature: Update the preview whenever the active brick updates (e.g. spawns)
-            refreshNextBrick(brick);
-            // Update hold display
-            refreshHoldBrick(brick);
-            // Update shadow
-            refreshShadowBrick(brick);
-        }
-    }
-
-    // Draw the Shadow Brick
-    private void refreshShadowBrick(ViewData brick) {
-        // Clear previous shadow
-        for (int i = 2; i < shadowRectangles.length; i++) {
-            for (int j = 0; j < shadowRectangles[i].length; j++) {
-                shadowRectangles[i][j].setFill(Color.TRANSPARENT);
-            }
-        }
-        // Apply Offset
-        shadowBrickPanel.setLayoutX(gamePanel.getLayoutX() + BOARD_OFFSET_X);
-        shadowBrickPanel.setLayoutY(gamePanel.getLayoutY() + BOARD_OFFSET_Y);
-
-        int[][] shape = brick.getBrickData();
-        int shadowY = brick.getShadowY();
-        int startX = brick.getxPosition();
-
-        for (int i = 0; i < shape.length; i++) {
-            for (int j = 0; j < shape[i].length; j++) {
-                if (shape[i][j] != 0) {
-                    // Coordinate mapping (i=row, j=col based on your matrix logic)
-                    int targetY = shadowY + i;
-                    int targetX = startX + j;
-
-                    // Check bounds (safety)
-                    if (targetY >= 2 && targetY < shadowRectangles.length &&
-                            targetX >= 0 && targetX < shadowRectangles[0].length) {
-
-                        shadowRectangles[targetY][targetX].setFill(Color.GRAY);
-                        shadowRectangles[targetY][targetX].setOpacity(0.3);
-                        shadowRectangles[targetY][targetX].setArcWidth(9);
-                        shadowRectangles[targetY][targetX].setArcHeight(9);
-                    }
-                }
-            }
-        }
-    }
-
     // Update the Hold Grid (Same centering logic as refreshNextBrick)
     private void refreshHoldBrick(ViewData brick) {
         int[][] holdData = brick.getHoldBrickData();
@@ -469,6 +399,43 @@ public class GuiController implements Initializable {
                     int targetCol = startCol + (j - minCol);
                     if (targetRow >= 0 && targetRow < 4 && targetCol >= 0 && targetCol < 4) {
                         holdBrickRectangles[targetRow][targetCol].setFill(getFillColor(holdData[i][j]));
+                    }
+                }
+            }
+        }
+    }
+
+    // Draw the Shadow Brick
+    private void refreshShadowBrick(ViewData brick) {
+        // Clear previous shadow
+        for (int i = 2; i < shadowRectangles.length; i++) {
+            for (int j = 0; j < shadowRectangles[i].length; j++) {
+                shadowRectangles[i][j].setFill(Color.TRANSPARENT);
+            }
+        }
+        // Apply Offset
+        shadowBrickPanel.setLayoutX(gamePanel.getLayoutX() + BOARD_OFFSET_X);
+        shadowBrickPanel.setLayoutY(gamePanel.getLayoutY() + BOARD_OFFSET_Y);
+
+        int[][] shape = brick.getBrickData();
+        int shadowY = brick.getShadowY();
+        int startX = brick.getxPosition();
+
+        for (int i = 0; i < shape.length; i++) {
+            for (int j = 0; j < shape[i].length; j++) {
+                if (shape[i][j] != 0) {
+                    // Coordinate mapping (i=row, j=col based on your matrix logic)
+                    int targetY = shadowY + i;
+                    int targetX = startX + j;
+
+                    // Check bounds (safety)
+                    if (targetY >= 2 && targetY < shadowRectangles.length &&
+                            targetX >= 0 && targetX < shadowRectangles[0].length) {
+
+                        shadowRectangles[targetY][targetX].setFill(Color.GRAY);
+                        shadowRectangles[targetY][targetX].setOpacity(0.3);
+                        shadowRectangles[targetY][targetX].setArcWidth(9);
+                        shadowRectangles[targetY][targetX].setArcHeight(9);
                     }
                 }
             }
@@ -561,19 +528,58 @@ public class GuiController implements Initializable {
         }
     }
 
+    // Fix: Reordered lines to unpause flags FIRST so visual update isn't blocked
     public void newGame(ActionEvent actionEvent) {
         timeLine.stop();
         gameOverPanel.setVisible(false);
+
+        // Unpause FIRST
+        isPause.setValue(Boolean.FALSE);
+        isGameOver.setValue(Boolean.FALSE);
+
         eventListener.createNewGame();
         gamePanel.requestFocus();
         timeLine.play();
-        isPause.setValue(Boolean.FALSE);
-        isGameOver.setValue(Boolean.FALSE);
+
         pauseMenu.setVisible(false);
         gamePanel.setOpacity(1.0);
     }
 
     public void pauseGame(ActionEvent actionEvent) {
         gamePanel.requestFocus();
+    }
+
+    private Paint getFillColor(int i) {
+        switch (i) {
+            case 0: return Color.TRANSPARENT;
+            case 1: return Color.AQUA;
+            case 2: return Color.BLUEVIOLET;
+            case 3: return Color.DARKGREEN;
+            case 4: return Color.YELLOW;
+            case 5: return Color.RED;
+            case 6: return Color.BEIGE;
+            case 7: return Color.BURLYWOOD;
+            default: return Color.WHITE;
+        }
+    }
+
+    // Fix: Changed from private to public so GameController can force a refresh
+    public void refreshBrick(ViewData brick) {
+        if (isPause.getValue() == Boolean.FALSE) {
+            // Apply Offset
+            brickPanel.setLayoutX(gamePanel.getLayoutX() + BOARD_OFFSET_X + brick.getxPosition() * brickPanel.getVgap() + brick.getxPosition() * BRICK_SIZE);
+            brickPanel.setLayoutY(-42 + gamePanel.getLayoutY() + BOARD_OFFSET_Y + brick.getyPosition() * brickPanel.getHgap() + brick.getyPosition() * BRICK_SIZE);
+            for (int i = 0; i < brick.getBrickData().length; i++) {
+                for (int j = 0; j < brick.getBrickData()[i].length; j++) {
+                    setRectangleData(brick.getBrickData()[i][j], rectangles[i][j]);
+                }
+            }
+            // Feature: Update the preview whenever the active brick updates (e.g. spawns)
+            refreshNextBrick(brick);
+            // Update hold display
+            refreshHoldBrick(brick);
+            // Update shadow
+            refreshShadowBrick(brick);
+        }
     }
 }

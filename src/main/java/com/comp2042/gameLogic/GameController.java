@@ -118,6 +118,11 @@ public class GameController implements InputEventListener {
     @Override
     public void createNewGame() {
         board.newGame();
+
+        // Fix: Force a refresh of the background (to clear stuck blocks)
         viewGuiController.refreshGameBackground(board.getBoardMatrix());
+
+        // Fix: Force a refresh of the active brick/shadow/queue
+        viewGuiController.refreshBrick(board.getViewData());
     }
 }
