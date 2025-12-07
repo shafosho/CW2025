@@ -32,30 +32,28 @@ public class MenuController {
 
         // 3. Get current stage and Preserve Window State
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        double currentWidth = stage.getWidth();
-        double currentHeight = stage.getHeight();
+
+        double currentWidth = stage.getScene().getWidth();
+        double currentHeight = stage.getScene().getHeight();
         boolean isMaximized = stage.isMaximized();
 
         // 4. Switch Scene
-        Scene scene = new Scene(root);
+        Scene scene = new Scene(root, currentWidth, currentHeight);
 
         stage.setTitle("Tetris - Playing");
         stage.setScene(scene);
 
         // 5. Restore Window State (Prevent shrinking)
+        stage.show();
+
         if (isMaximized) {
             stage.setMaximized(true);
         } else {
-            stage.setWidth(currentWidth);
-            stage.setHeight(currentHeight);
+            // Only center if NOT maximized and just starting standard size
+            if (currentWidth == 800 && currentHeight == 600) {
+                stage.centerOnScreen();
+            }
         }
-
-        // Only center if NOT maximized and just starting standard size
-        if (!isMaximized && currentWidth == 600 && currentHeight == 600) {
-            stage.centerOnScreen();
-        }
-
-        stage.show();
     }
 
     /**

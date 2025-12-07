@@ -30,10 +30,10 @@
             </VBox>
 
             <Label fx:id="highScoreLabel"
-                   layoutX="-150" layoutY="60"
+                   layoutX="-140" layoutY="60"
                    text="TOP: 0"
                    styleClass="scoreClass"
-                   style="-fx-text-fill: gold; -fx-font-size: 22px; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 5, 0, 0, 0);"/>
+                   style="-fx-text-fill: gold; -fx-font-size: 30px; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 5, 0, 0, 0);"/>
 
             <VBox layoutX="-150" layoutY="100" spacing="5">
                 <Label text="CONTROLS" styleClass="controlTitle"/>
@@ -62,20 +62,6 @@
 
                         <GameOverPanel fx:id="gameOverPanel" visible="false"/>
 
-                        <VBox fx:id="instructionsPanel" alignment="CENTER" spacing="20" styleClass="instructionPanel">
-                            <Label text="HOW TO PLAY" styleClass="instructionTitle"/>
-                            <VBox alignment="CENTER" spacing="10">
-                                <Label text="A / Left    : Move Left" styleClass="instructionItem"/>
-                                <Label text="D / Right   : Move Right" styleClass="instructionItem"/>
-                                <Label text="W / Up   : Rotate" styleClass="instructionItem"/>
-                                <Label text="S / Down   : Soft Drop" styleClass="instructionItem"/>
-                                <Label text="Space      : Hard Drop" styleClass="instructionItem"/>
-                                <Label text="P           : Pause     " styleClass="instructionItem"/>
-                                <Label text="N           : New Game" styleClass="instructionItem"/>
-                            </VBox>
-                            <Button text="READY!" onAction="#startGame" styleClass="readyButton"/>
-                        </VBox>
-
                     </StackPane>
                 </center>
             </BorderPane>
@@ -83,6 +69,20 @@
             <Group fx:id="groupNotification" layoutX="65" layoutY="260"/>
         </Pane>
     </Group>
+
+    <VBox fx:id="instructionsPanel" alignment="CENTER" spacing="20" styleClass="instructionPanel">
+        <Label text="HOW TO PLAY" styleClass="instructionTitle"/>
+        <VBox alignment="CENTER" spacing="10">
+            <Label text="A / Left    : Move Left" styleClass="instructionItem"/>
+            <Label text="D / Right   : Move Right" styleClass="instructionItem"/>
+            <Label text="W / Up        : Rotate     " styleClass="instructionItem"/>
+            <Label text="S / Down   : Soft Drop" styleClass="instructionItem"/>
+            <Label text="Space      : Hard Drop" styleClass="instructionItem"/>
+            <Label text="P           : Pause     " styleClass="instructionItem"/>
+            <Label text="N           : New Game" styleClass="instructionItem"/>
+        </VBox>
+        <Button text="READY!" onAction="#startGame" styleClass="readyButton"/>
+    </VBox>
 
     <stylesheets>
         <URL value="@window_style.css"/>
