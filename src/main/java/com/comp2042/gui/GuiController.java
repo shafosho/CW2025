@@ -68,6 +68,7 @@ public class GuiController implements Initializable {
 
     private InputHandler inputHandler;
     private PreviewInitializer previewInitializer;
+    private GameViewInitializer gameViewInitializer;
 
     private Rectangle[][] displayMatrix;
     private InputEventListener eventListener;
@@ -87,6 +88,7 @@ public class GuiController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         Font.loadFont(getClass().getClassLoader().getResource("digital.ttf").toExternalForm(), 38);
+        gameViewInitializer = new GameViewInitializer(this, BRICK_SIZE);
         gamePanel.setFocusTraversable(true);
         gamePanel.requestFocus();
 
@@ -159,36 +161,15 @@ public class GuiController implements Initializable {
     }
 
     public void initGameView(int[][] boardMatrix, ViewData brick) {
-        displayMatrix = new Rectangle[boardMatrix.length][boardMatrix[0].length];
-        for (int i = 2; i < boardMatrix.length; i++) {
-            for (int j = 0; j < boardMatrix[i].length; j++) {
-                Rectangle rectangle = new Rectangle(BRICK_SIZE, BRICK_SIZE);
-                rectangle.setFill(Color.TRANSPARENT);
-                displayMatrix[i][j] = rectangle;
-                gamePanel.add(rectangle, j, i - 2);
-            }
-        }
+        // Refactor: Use GameViewInitializer to create and initialize the grid views
+        Rectangle[][][] initializedRects = gameViewInitializer.initializeGameGrids(
+                boardMatrix, gamePanel, brickPanel, shadowBrickPanel
+        );
 
-        rectangles = new Rectangle[brick.getBrickData().length][brick.getBrickData()[0].length];
-        for (int i = 0; i < brick.getBrickData().length; i++) {
-            for (int j = 0; j < brick.getBrickData()[i].length; j++) {
-                Rectangle rectangle = new Rectangle(BRICK_SIZE, BRICK_SIZE);
-                rectangle.setFill(getFillColor(brick.getBrickData()[i][j]));
-                rectangles[i][j] = rectangle;
-                brickPanel.add(rectangle, j, i);
-            }
-        }
-
-        // Initialize Shadow Rectangles
-        shadowRectangles = new Rectangle[boardMatrix.length][boardMatrix[0].length];
-        for (int i = 2; i < boardMatrix.length; i++) {
-            for (int j = 0; j < boardMatrix[i].length; j++) {
-                Rectangle rect = new Rectangle(BRICK_SIZE, BRICK_SIZE);
-                rect.setFill(Color.TRANSPARENT);
-                shadowRectangles[i][j] = rect;
-                shadowBrickPanel.add(rect, j, i - 2);
-            }
-        }
+        // Unpack the initialized arrays
+        this.displayMatrix = initializedRects[0];
+        this.rectangles = initializedRects[1];
+        this.shadowRectangles = initializedRects[2];
 
         // Apply Offset
         brickPanel.setLayoutX(gamePanel.getLayoutX() + BOARD_OFFSET_X + brick.getxPosition() * brickPanel.getVgap() + brick.getxPosition() * BRICK_SIZE);
@@ -468,7 +449,7 @@ public class GuiController implements Initializable {
     }
 
     // Cohesive "Cyberpunk" Palette for Midnight Theme
-    private Paint getFillColor(int i) {
+    public Paint getFillColor(int i) {
         switch (i) {
             case 0: return Color.TRANSPARENT;
             case 1: return Color.web("#00f0ff"); // Electric Cyan
