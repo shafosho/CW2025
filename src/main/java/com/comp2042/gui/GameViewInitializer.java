@@ -13,16 +13,11 @@ import javafx.scene.shape.Rectangle;
 public class GameViewInitializer {
 
     private final int BRICK_SIZE;
-    private final GuiController controller;
+    private final StyleManager styleManager;
 
-    public GameViewInitializer(GuiController controller, int brickSize) {
-        this.controller = controller;
+    public GameViewInitializer(StyleManager styleManager, int brickSize) {
+        this.styleManager = styleManager;
         this.BRICK_SIZE = brickSize;
-    }
-
-    // Helper method to retrieve the color map for the grid initialization
-    private Paint getFillColor(int i) {
-        return controller.getFillColor(i);
     }
 
     /**
