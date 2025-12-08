@@ -8,12 +8,12 @@
 
 <StackPane fx:controller="com.comp2042.gui.MenuController"
            xmlns:fx="http://javafx.com/fxml"
-           prefWidth="600" prefHeight="600"
+           prefWidth="750" prefHeight="600"
            styleClass="root">
 
-    <VBox alignment="CENTER" spacing="20" style="-fx-background-color: rgba(0, 0, 0, 0.5); -fx-padding: 50; -fx-background-radius: 20;">
+    <VBox alignment="CENTER" spacing="30" styleClass="menu-box">
 
-        <Label text="TETRIS" styleClass="gameOverStyle" style="-fx-font-size: 80px; -fx-text-fill: cyan; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);"/>
+        <Label text="TETRIS" styleClass="tetris-title"/>
 
         <Button text="START GAME" onAction="#onStartGame"
                 styleClass="menuButton"/>

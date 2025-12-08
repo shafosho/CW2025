@@ -40,8 +40,8 @@ import java.util.ResourceBundle;
 public class GuiController implements Initializable {
 
     private static final int BRICK_SIZE = 20;
-    private static final int BOARD_OFFSET_X = 32; // Matches FXML gameBoard layoutX
-    private static final int BOARD_OFFSET_Y = 42; // Matches FXML gameBoard layoutY
+    private static final int BOARD_OFFSET_X = 250; // Matches FXML gameBoard layoutX
+    private static final int BOARD_OFFSET_Y = 30; // Matches FXML gameBoard layoutY
 
     @FXML private GridPane gamePanel;
     @FXML private Group groupNotification;
@@ -152,7 +152,7 @@ public class GuiController implements Initializable {
         reflection.setTopOpacity(0.9);
         reflection.setTopOffset(-12);
 
-        // Feature: Initialize the Next Brick preview grid (UPDATED for 3)
+        // Feature: Initialize the Next Brick preview grid (Updated for 3)
         nextBrickGrids = new GridPane[]{nextBrick1, nextBrick2, nextBrick3};
         initNextBrickView();
         // Initialize the Hold Brick preview grid
@@ -483,6 +483,7 @@ public class GuiController implements Initializable {
         });
 
         score.addListener((obs, oldVal, newVal) -> {
+            // FIX: Compare against numeric high score (safer than text parsing)
             if (newVal.intValue() > currentHighScore) {
                 highScoreLabel.setText("TOP: " + newVal);
                 highScoreNameLabel.setText("(YOU!)"); // Update the name label
@@ -541,16 +542,17 @@ public class GuiController implements Initializable {
         gamePanel.requestFocus();
     }
 
+    // Cohesive "Cyberpunk" Palette for Midnight Theme
     private Paint getFillColor(int i) {
         switch (i) {
             case 0: return Color.TRANSPARENT;
-            case 1: return Color.AQUA;
-            case 2: return Color.BLUEVIOLET;
-            case 3: return Color.DARKGREEN;
-            case 4: return Color.YELLOW;
-            case 5: return Color.RED;
-            case 6: return Color.BEIGE;
-            case 7: return Color.BURLYWOOD;
+            case 1: return Color.web("#00f0ff"); // Electric Cyan
+            case 2: return Color.web("#ff0099"); // Hot Pink
+            case 3: return Color.web("#39ff14"); // Neon Lime
+            case 4: return Color.web("#fff01f"); // Sunshine Yellow
+            case 5: return Color.web("#ff4500"); // Bright Orange-Red
+            case 6: return Color.web("#bd00ff"); // Electric Purple
+            case 7: return Color.web("#ff9900"); // Tangerine Orange
             default: return Color.WHITE;
         }
     }

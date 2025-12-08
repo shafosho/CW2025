@@ -12,15 +12,15 @@
            xmlns:fx="http://javafx.com/fxml">
 
     <Group>
-        <Pane prefWidth="600" prefHeight="600">
+        <Pane prefWidth="750" prefHeight="600">
 
             <GridPane fx:id="brickPanel" vgap="1" hgap="1"/>
 
-            <Label fx:id="scoreLabel" layoutX="300" layoutY="50" text="Score: 0" styleClass="scoreClass"/>
-            <Label fx:id="levelLabel" layoutX="300" layoutY="100" text="Level: 1" styleClass="scoreClass"/>
-            <Label fx:id="linesLabel" layoutX="300" layoutY="150" text="Lines Cleared: 0" styleClass="scoreClass"/>
+            <Label fx:id="scoreLabel" layoutX="500" layoutY="50" text="Score: 0" styleClass="scoreClass"/>
+            <Label fx:id="levelLabel" layoutX="500" layoutY="100" text="Level: 1" styleClass="scoreClass"/>
+            <Label fx:id="linesLabel" layoutX="500" layoutY="150" text="Lines Cleared: 0" styleClass="scoreClass"/>
 
-            <VBox layoutX="300" layoutY="200" spacing="10">
+            <VBox layoutX="500" layoutY="200" spacing="10">
                 <Label text="NEXT" styleClass="scoreClass"/>
 
                 <VBox fx:id="nextQueueContainer" spacing="5" styleClass="previewBox">
@@ -30,12 +30,12 @@
                 </VBox>
             </VBox>
 
-            <VBox layoutX="400" layoutY="200" spacing="10">
+            <VBox layoutX="600" layoutY="200" spacing="10">
                 <Label text="HOLD" styleClass="scoreClass"/>
                 <GridPane fx:id="holdBrickPanel" vgap="1" hgap="1" styleClass="previewBox"/>
             </VBox>
 
-            <VBox layoutX="-140" layoutY="60" spacing="10" alignment="TOP_CENTER" prefWidth="150">
+            <VBox layoutX="83" layoutY="60" spacing="10" alignment="TOP_CENTER" prefWidth="150">
                 <Label fx:id="highScoreLabel"
                        text="TOP: 0"
                        styleClass="highScoreValue"/>
@@ -51,7 +51,7 @@
                 </Button>
             </VBox>
 
-            <VBox layoutX="-125" layoutY="200" spacing="5">
+            <VBox layoutX="100" layoutY="200" spacing="5">
                 <Label text="CONTROLS" styleClass="controlTitle"/>
                 <Label text="A / Left  : Move Left" styleClass="controlItem"/>
                 <Label text="D / Right : Move Right" styleClass="controlItem"/>
@@ -63,7 +63,7 @@
                 <Label text="N              : New Game" styleClass="controlItem"/>
             </VBox>
 
-            <BorderPane styleClass="gameBoard" fx:id="gameBoard" layoutX="20" layoutY="30" prefWidth="224" prefHeight="500">
+            <BorderPane styleClass="gameBoard" fx:id="gameBoard" layoutX="250" layoutY="30" prefWidth="224" prefHeight="500">
                 <center>
                     <StackPane>
                         <GridPane fx:id="shadowBrickPanel" vgap="1" hgap="1"/>
@@ -80,7 +80,7 @@
                 </center>
             </BorderPane>
 
-            <Group fx:id="groupNotification" layoutX="65" layoutY="260"/>
+            <Group fx:id="groupNotification" layoutX="250" layoutY="260"/>
         </Pane>
     </Group>
 
