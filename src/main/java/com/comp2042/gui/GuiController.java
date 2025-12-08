@@ -33,6 +33,9 @@ import javafx.application.Platform;
 import com.comp2042.data.ScoreEntry;
 import com.comp2042.gameLogic.HighScoreManager; // Added explicit import
 import java.util.List;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.control.Button;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -75,6 +78,10 @@ public class GuiController implements Initializable {
     private Timeline timeLine;
     private final BooleanProperty isPause = new SimpleBooleanProperty();
     private final BooleanProperty isGameOver = new SimpleBooleanProperty();
+
+    @FXML private Button muteButton; // Links to the mute button
+    private MediaPlayer mediaPlayer;
+    private boolean isMuted = false;
 
     // Feature: Track high score numerically to avoid parsing errors with names
     private int currentHighScore = 0;
@@ -173,6 +180,9 @@ public class GuiController implements Initializable {
             highScoreLabel.setText("TOP: 0");
             highScoreNameLabel.setText(""); // Clear name
         }
+
+        // Feature: Initialize background music (Safe to run even if file is missing)
+        initMusic();
     }
 
     @FXML
@@ -228,11 +238,15 @@ public class GuiController implements Initializable {
             timeLine.play();
             pauseMenu.setVisible(false);
             gamePanel.setOpacity(1.0);
+            // Feature: Resume music
+            if (mediaPlayer != null) mediaPlayer.play();
         } else {
             isPause.set(true);
             timeLine.stop();
             pauseMenu.setVisible(true);
             gamePanel.setOpacity(0.5);
+            // Feature: Pause music
+            if (mediaPlayer != null) mediaPlayer.pause();
         }
     }
 
@@ -497,6 +511,8 @@ public class GuiController implements Initializable {
     // Feature: Only show congratulations dialog if the score is actually a high score (Top 3)
     public void gameOver() {
         timeLine.stop();
+        // Feature: Stop music on Game Over
+        if (mediaPlayer != null) mediaPlayer.stop();
         gameOverPanel.setVisible(true);
         isGameOver.setValue(Boolean.TRUE);
 
@@ -526,6 +542,11 @@ public class GuiController implements Initializable {
     public void newGame(ActionEvent actionEvent) {
         timeLine.stop();
         gameOverPanel.setVisible(false);
+        // Feature: Restart music
+        if (mediaPlayer != null) {
+            mediaPlayer.stop();
+            mediaPlayer.play();
+        }
 
         // Unpause FIRST
         isPause.setValue(Boolean.FALSE);
@@ -575,6 +596,46 @@ public class GuiController implements Initializable {
             refreshHoldBrick(brick);
             // Update shadow
             refreshShadowBrick(brick);
+        }
+    }
+
+    /**
+     * Feature: Sound System - Mute Toggle
+     */
+    @FXML
+    public void toggleMute(ActionEvent event) {
+        if (mediaPlayer == null) return;
+
+        isMuted = !isMuted;
+        if (isMuted) {
+            mediaPlayer.setMute(true);
+            muteButton.setText("UNMUTE");
+            muteButton.setStyle("-fx-base: #555555; -fx-font-size: 14px; -fx-padding: 5 15;"); // Grey styling
+        } else {
+            mediaPlayer.setMute(false);
+            muteButton.setText("MUTE");
+            muteButton.setStyle("-fx-base: #2A5058; -fx-font-size: 14px; -fx-padding: 5 15;"); // Original styling
+        }
+        // Important: Return focus to the game so keyboard controls keep working!
+        gamePanel.requestFocus();
+    }
+
+    /**
+     * Initializes background music. Safe to run even if file is missing.
+     */
+    private void initMusic() {
+        try {
+            // Looks for src/main/resources/music.mp3
+            URL musicResource = getClass().getClassLoader().getResource("music.mp3");
+            if (musicResource != null) {
+                Media sound = new Media(musicResource.toExternalForm());
+                mediaPlayer = new MediaPlayer(sound);
+                mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE); // Loop forever
+                mediaPlayer.setVolume(0.5);
+                mediaPlayer.play();
+            }
+        } catch (Exception e) {
+            System.out.println("Music init failed: " + e.getMessage());
         }
     }
 }
