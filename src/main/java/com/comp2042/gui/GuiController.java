@@ -34,6 +34,7 @@ import java.util.List;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.control.Button;
+import javafx.scene.layout.Region;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -49,6 +50,7 @@ public class GuiController implements Initializable {
     @FXML private Group groupNotification;
     @FXML private GridPane brickPanel;
     @FXML private GridPane shadowBrickPanel; // Shadow Grid
+    @FXML private GridPane holdBrickPanel;
     @FXML private GameOverPanel gameOverPanel;
     @FXML private Label highScoreLabel;
     @FXML private Label highScoreNameLabel;
@@ -60,20 +62,17 @@ public class GuiController implements Initializable {
     @FXML private GridPane nextBrick1;
     @FXML private GridPane nextBrick2;
     @FXML private GridPane nextBrick3;
-    private GridPane[] nextBrickGrids; // Array to hold them for easy looping
-    private Rectangle[][][] nextBrickRectangles; // 3D array: [WhichBrick][Row][Col]
 
-    @FXML private GridPane holdBrickPanel; // The Hold Piece Grid
     @FXML private VBox pauseMenu;
     @FXML private VBox instructionsPanel;
 
     private InputHandler inputHandler;
+    private PreviewInitializer previewInitializer;
 
     private Rectangle[][] displayMatrix;
     private InputEventListener eventListener;
     private Rectangle[][] rectangles;
     private Rectangle[][] shadowRectangles; // The rectangles for the shadow
-    private Rectangle[][] holdBrickRectangles; // The rectangles for hold display
 
     private Timeline timeLine;
     private final BooleanProperty isPause = new SimpleBooleanProperty();
@@ -112,11 +111,9 @@ public class GuiController implements Initializable {
         reflection.setTopOpacity(0.9);
         reflection.setTopOffset(-12);
 
-        // Feature: Initialize the Next Brick preview grid (Updated for 3)
-        nextBrickGrids = new GridPane[]{nextBrick1, nextBrick2, nextBrick3};
-        initNextBrickView();
-        // Initialize the Hold Brick preview grid
-        initHoldBrickView();
+        // Refactor: Initialize Preview Setup
+        GridPane[] nextGrids = new GridPane[]{nextBrick1, nextBrick2, nextBrick3};
+        previewInitializer = new PreviewInitializer(nextGrids, holdBrickPanel);
 
         // Feature: Load High Score AND Name
         List<ScoreEntry> topScores = new com.comp2042.gameLogic.HighScoreManager().getTopScores();
@@ -141,44 +138,6 @@ public class GuiController implements Initializable {
         instructionsPanel.setVisible(false);
         gamePanel.requestFocus(); // Give focus back to the game so keys work
         timeLine.play(); // Start the game
-    }
-
-    /**
-     * Creates the 4x4 grid of empty rectangles for the Next Piece preview.
-     */
-    private void initNextBrickView() {
-        nextBrickRectangles = new Rectangle[3][4][4]; // 3 bricks, 4x4 each
-
-        for (int k = 0; k < 3; k++) { // Loop through the 3 grids
-            for (int i = 0; i < 4; i++) {
-                for (int j = 0; j < 4; j++) {
-                    Rectangle rectangle = new Rectangle(BRICK_SIZE, BRICK_SIZE);
-                    rectangle.setFill(Color.TRANSPARENT);
-
-                    // Fix: Add rounded corners to match the main game style
-                    rectangle.setArcWidth(9);
-                    rectangle.setArcHeight(9);
-
-                    nextBrickRectangles[k][i][j] = rectangle;
-                    nextBrickGrids[k].add(rectangle, j, i);
-                }
-            }
-        }
-    }
-
-    // Initialize the Hold Grid (Same style as Next Brick)
-    private void initHoldBrickView() {
-        holdBrickRectangles = new Rectangle[4][4];
-        for (int i = 0; i < 4; i++) {
-            for (int j = 0; j < 4; j++) {
-                Rectangle rectangle = new Rectangle(BRICK_SIZE, BRICK_SIZE);
-                rectangle.setFill(Color.TRANSPARENT);
-                rectangle.setArcWidth(9);
-                rectangle.setArcHeight(9);
-                holdBrickRectangles[i][j] = rectangle;
-                holdBrickPanel.add(rectangle, j, i);
-            }
-        }
     }
 
     public void togglePause() {
@@ -259,23 +218,19 @@ public class GuiController implements Initializable {
      */
     private void refreshNextBrick(ViewData brick) {
         List<int[][]> nextDataList = brick.getNextBrickData();
+        Rectangle[][][] nextRects = previewInitializer.nextBrickRectangles;
 
-        // Loop through up to 3 bricks (or however many are sent)
-        for (int k = 0; k < nextBrickRectangles.length; k++) {
-
-            // 1. Clear grid
+        // Loop using the size of the array from PreviewInitializer
+        for (int k = 0; k < nextRects.length; k++) {
             for (int i = 0; i < 4; i++) {
                 for (int j = 0; j < 4; j++) {
-                    nextBrickRectangles[k][i][j].setFill(Color.TRANSPARENT);
+                    nextRects[k][i][j].setFill(Color.TRANSPARENT);
                 }
             }
 
-            // Safety: If data has fewer than 3 bricks, stop
             if (k >= nextDataList.size()) continue;
-
             int[][] nextData = nextDataList.get(k);
 
-            // 2. Find bounds for centering (Same logic as before, just inside loop)
             int minRow = 4, maxRow = 0, minCol = 4, maxCol = 0;
             boolean hasBlock = false;
             for (int i = 0; i < nextData.length; i++) {
@@ -289,7 +244,6 @@ public class GuiController implements Initializable {
                     }
                 }
             }
-
             if (!hasBlock) continue;
 
             int pieceHeight = maxRow - minRow + 1;
@@ -297,13 +251,12 @@ public class GuiController implements Initializable {
             int startRow = (4 - pieceHeight) / 2;
             int startCol = (4 - pieceWidth) / 2;
 
-            // 3. Draw
             for (int i = minRow; i <= maxRow; i++) {
                 for (int j = minCol; j <= maxCol; j++) {
                     if (nextData[i][j] != 0) {
                         int targetRow = startRow + (i - minRow);
                         int targetCol = startCol + (j - minCol);
-                        nextBrickRectangles[k][targetRow][targetCol].setFill(getFillColor(nextData[i][j]));
+                        nextRects[k][targetRow][targetCol].setFill(getFillColor(nextData[i][j]));
                     }
                 }
             }
@@ -313,17 +266,16 @@ public class GuiController implements Initializable {
     // Update the Hold Grid (Same centering logic as refreshNextBrick)
     private void refreshHoldBrick(ViewData brick) {
         int[][] holdData = brick.getHoldBrickData();
+        Rectangle[][] holdRects = previewInitializer.holdBrickRectangles; // Now using the correct reference
 
-        // Clear previous state
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
-                holdBrickRectangles[i][j].setFill(Color.TRANSPARENT);
+                holdRects[i][j].setFill(Color.TRANSPARENT); // Using the correct array reference
             }
         }
 
-        if (holdData == null) return; // Nothing held yet
+        if (holdData == null) return;
 
-        // Find bounds
         int minRow = 4, maxRow = 0, minCol = 4, maxCol = 0;
         boolean hasBlock = false;
         for (int i = 0; i < holdData.length; i++) {
@@ -339,18 +291,16 @@ public class GuiController implements Initializable {
         }
         if (!hasBlock) return;
 
-        // Calculate offset
         int startRow = (4 - (maxRow - minRow + 1)) / 2;
         int startCol = (4 - (maxCol - minCol + 1)) / 2;
 
-        // Draw
         for (int i = minRow; i <= maxRow; i++) {
             for (int j = minCol; j <= maxCol; j++) {
                 if (holdData[i][j] != 0) {
                     int targetRow = startRow + (i - minRow);
                     int targetCol = startCol + (j - minCol);
                     if (targetRow >= 0 && targetRow < 4 && targetCol >= 0 && targetCol < 4) {
-                        holdBrickRectangles[targetRow][targetCol].setFill(getFillColor(holdData[i][j]));
+                        holdRects[targetRow][targetCol].setFill(getFillColor(holdData[i][j])); // Using the correct array reference
                     }
                 }
             }
