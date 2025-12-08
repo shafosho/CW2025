@@ -12,14 +12,12 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Group;
 import javafx.scene.control.Label;
 import javafx.scene.effect.Reflection;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -69,6 +67,8 @@ public class GuiController implements Initializable {
     @FXML private VBox pauseMenu;
     @FXML private VBox instructionsPanel;
 
+    private InputHandler inputHandler;
+
     private Rectangle[][] displayMatrix;
     private InputEventListener eventListener;
     private Rectangle[][] rectangles;
@@ -91,58 +91,11 @@ public class GuiController implements Initializable {
         gamePanel.setFocusTraversable(true);
         gamePanel.requestFocus();
 
-        gamePanel.setOnKeyPressed(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent keyEvent) {
-                if (keyEvent.getCode() == KeyCode.P) {
-                    togglePause();
-                    keyEvent.consume();
-                    return;
-                }
+        // Initialize the InputHandler and pass necessary components
+        inputHandler = new InputHandler(this, isPause, isGameOver);
 
-                if (isPause.getValue() == Boolean.FALSE && isGameOver.getValue() == Boolean.FALSE) {
-                    if (keyEvent.getCode() == KeyCode.LEFT || keyEvent.getCode() == KeyCode.A) {
-                        refreshBrick(eventListener.onLeftEvent(new MoveEvent(EventType.LEFT, EventSource.USER)));
-                        keyEvent.consume();
-                    }
-                    if (keyEvent.getCode() == KeyCode.RIGHT || keyEvent.getCode() == KeyCode.D) {
-                        refreshBrick(eventListener.onRightEvent(new MoveEvent(EventType.RIGHT, EventSource.USER)));
-                        keyEvent.consume();
-                    }
-                    if (keyEvent.getCode() == KeyCode.UP || keyEvent.getCode() == KeyCode.W) {
-                        refreshBrick(eventListener.onRotateEvent(new MoveEvent(EventType.ROTATE, EventSource.USER)));
-                        keyEvent.consume();
-                    }
-                    if (keyEvent.getCode() == KeyCode.DOWN || keyEvent.getCode() == KeyCode.S) {
-                        moveDown(new MoveEvent(EventType.DOWN, EventSource.USER));
-                        keyEvent.consume();
-                    }
-                    if (keyEvent.getCode() == KeyCode.SPACE) {
-                        // 1. Capture the full data (Score + Visuals)
-                        DownData downData = eventListener.onHardDropEvent(new MoveEvent(EventType.HARD_DROP, EventSource.USER));
-
-                        // 2. Check for Score/Line Clears (Same logic as moveDown)
-                        if (downData.getClearRow() != null && downData.getClearRow().getLinesRemoved() > 0) {
-                            NotificationPanel notificationPanel = new NotificationPanel("+" + downData.getClearRow().getScoreBonus());
-                            groupNotification.getChildren().add(notificationPanel);
-                            notificationPanel.showScore(groupNotification.getChildren());
-                        }
-
-                        // 3. Refresh the board
-                        refreshBrick(downData.getViewData());
-                        keyEvent.consume();
-                    }
-                    // Feature: Hold Brick on 'C' Key
-                    if (keyEvent.getCode() == KeyCode.C) {
-                        refreshBrick(eventListener.onHoldEvent(new MoveEvent(EventType.HOLD, EventSource.USER)));
-                        keyEvent.consume();
-                    }
-                }
-                if (keyEvent.getCode() == KeyCode.N) {
-                    newGame(null);
-                }
-            }
-        });
+        // Refactor: Link key handling logic to the new InputHandler class
+        gamePanel.setOnKeyPressed(inputHandler::handleKeyInput);
 
         gameOverPanel.setVisible(false);
         // Connect the Game Over buttons
@@ -228,7 +181,7 @@ public class GuiController implements Initializable {
         }
     }
 
-    private void togglePause() {
+    public void togglePause() {
         if (isGameOver.get()) return;
 
         if (isPause.get()) {
@@ -455,7 +408,7 @@ public class GuiController implements Initializable {
         rectangle.setArcWidth(9);
     }
 
-    private void moveDown(MoveEvent event) {
+    public void moveDown(MoveEvent event) {
         if (isPause.getValue() == Boolean.FALSE) {
             DownData downData = eventListener.onDownEvent(event);
             if (downData.getClearRow() != null && downData.getClearRow().getLinesRemoved() > 0) {
@@ -468,8 +421,17 @@ public class GuiController implements Initializable {
         gamePanel.requestFocus();
     }
 
+    /**
+     * Sets the InputEventListener and passes the listener down to the InputHandler class to enable game logic calls.
+     * * @param eventListener The game logic listener.
+     */
     public void setEventListener(InputEventListener eventListener) {
         this.eventListener = eventListener;
+
+        // Fix: The InputHandler must receive the listener instance
+        if (this.inputHandler != null) {
+            this.inputHandler.setEventListener(eventListener);
+        }
     }
 
     public void bindScore(IntegerProperty score, IntegerProperty level, IntegerProperty lines) {
@@ -598,5 +560,17 @@ public class GuiController implements Initializable {
         soundManager.toggleMute(event);
         // Important: Return focus to the game so keyboard controls keep working!
         gamePanel.requestFocus();
+    }
+
+    /**
+     * Helper method to display score pop-ups on the game screen.
+     * This method is called by the InputHandler.
+     *
+     * @param scoreBonus The score value to display in the notification panel.
+     */
+    public void showScoreNotification(int scoreBonus) {
+        NotificationPanel notificationPanel = new NotificationPanel("+" + scoreBonus);
+        groupNotification.getChildren().add(notificationPanel);
+        notificationPanel.showScore(groupNotification.getChildren());
     }
 }
