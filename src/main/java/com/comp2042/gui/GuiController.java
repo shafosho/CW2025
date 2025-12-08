@@ -40,8 +40,9 @@ import java.util.ResourceBundle;
 public class GuiController implements Initializable {
 
     private static final int BRICK_SIZE = 20;
-    private static final int BOARD_OFFSET_X = 250; // Matches FXML gameBoard layoutX
-    private static final int BOARD_OFFSET_Y = 30; // Matches FXML gameBoard layoutY
+    // Fix: Added +10 to account for the CSS border/padding
+    private static final int BOARD_OFFSET_X = 256;
+    private static final int BOARD_OFFSET_Y = 40;
 
     @FXML private GridPane gamePanel;
     @FXML private Group groupNotification;
